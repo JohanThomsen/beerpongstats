@@ -24,3 +24,5 @@ yarn-error.log
 /.zed
 /CopilotPictures
 docker-compose.yml
+docker-compose.prod.yml
+docker-compose.dev.yml
