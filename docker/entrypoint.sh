@@ -98,6 +98,17 @@ fi
 
 # In production, optionally cache config/routes for speed
 if [ "$APP_ENV" = "production" ] || [ "$APP_DEBUG" = "false" ]; then
+  # Ensure we are not pointing to the Vite dev server in production
+  if [ -f public/hot ]; then
+    echo "[entrypoint] Detected public/hot; removing to disable Vite dev server in production."
+    rm -f public/hot || true
+  fi
+  # Warn if built assets are missing
+  if [ ! -f public/build/manifest.json ]; then
+    echo "[entrypoint] WARNING: public/build/manifest.json not found. Frontend assets may not load."
+    echo "[entrypoint]         Build assets with: npm ci && npm run build (or run the 'assets' service)."
+  fi
+
   php artisan config:cache >/dev/null 2>&1 || true
   php artisan route:cache >/dev/null 2>&1 || true
   php artisan view:cache >/dev/null 2>&1 || true
