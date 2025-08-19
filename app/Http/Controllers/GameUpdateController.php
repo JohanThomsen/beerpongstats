@@ -6,33 +6,46 @@ use App\DataObjects\Requests\CreateGameUpdateRequestDataObject;
 use App\Models\Game;
 use App\Models\GameUpdate;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class GameUpdateController extends Controller
 {
-    public function store(CreateGameUpdateRequestDataObject $request, Game $game): JsonResponse
+    public function store(CreateGameUpdateRequestDataObject $request, Game $game): RedirectResponse
     {
         // Editor must be authenticated and a participant in the game
         if (!Auth::check() || ! $game->isUserInGame(Auth::id())) {
-            return response()->json(['message' => 'You are not allowed to edit this game.'], 403);
+            return back()->withErrors(['message' => 'You are not allowed to edit this game.']);
         }
 
         // Do not allow updates when the game is ended
         if ($game->is_ended) {
-            return response()->json(['message' => 'Game has ended. Updates are disabled.'], 403);
+            return back()->withErrors(['message' => 'Game has ended. Updates are disabled.']);
         }
 
         // If a user_id is provided, it must reference a player in this game
         if ($request->user_id && ! $game->isUserInGame($request->user_id)) {
-            return response()->json(['message' => 'User is not a participant in this game.'], 403);
+            return back()->withErrors(['message' => 'User is not a participant in this game.']);
         }
 
         $data = $request->toArray();
         $data['game_id'] = $game->id;
 
-        $gameUpdate = GameUpdate::create($data);
+        try {
+            $gameUpdate = GameUpdate::create($data);
 
-        return response()->json($gameUpdate, 201);
+            // Return back to the same page (live game page)
+            return back()->with('success', 'Game update created successfully.');
+        } catch (\Exception $e) {
+            \Log::error('GameUpdate creation failed', [
+                'game_id' => $game->id,
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'data' => $data
+            ]);
+
+            return back()->withErrors(['message' => 'Failed to create game update.']);
+        }
     }
 
     public function deleteLatestByGame(Game $game): JsonResponse

@@ -4,6 +4,7 @@ import CupRack from '@/components/CupRack.vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { echo } from '@laravel/echo-vue';
+import { useForm } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import type { GameType, GameUpdateType } from '@/types';
 
@@ -63,6 +64,17 @@ function bumpStats(userId: number | null | undefined, type: GameUpdateType | str
 
 const selectedTop = ref<number | null>(null);
 const selectedBottom = ref<number | null>(null);
+
+// Use Inertia form for CSRF-safe requests
+const updateForm = useForm({
+    user_id: null as number | null,
+    type: '' as GameUpdateType,
+    self_cup_positions: [] as number[],
+    opponent_cup_positions: [] as number[],
+    self_cups_left: 0,
+    opponent_cups_left: 0,
+    affected_cup: null as number | null,
+});
 
 // --- Orientation (define BEFORE orientAndSet uses isBottomUser) ---
 const bottomActors = computed<Array<{ id: number; name: string }>>(() => {
@@ -194,31 +206,19 @@ async function createUpdate(type: GameUpdateType, actor: 'bottom' | 'top', actin
     const actorSelf = actor === 'bottom' ? [...state.bottomPositions] : [...state.topPositions];
     const actorOpp = actor === 'bottom' ? [...state.topPositions] : [...state.bottomPositions];
 
-    const payload = {
-        user_id: actingUserId,
-        type,
-        self_cup_positions: actorSelf,
-        opponent_cup_positions: actorOpp,
-        self_cups_left: actorSelf.length,
-        opponent_cups_left: actorOpp.length,
-        affected_cup: null as number | null,
-    };
-
     const revert = { bottom: [...state.bottomPositions], top: [...state.topPositions] };
+
+    let affectedCup: number | null = null;
 
     if (type === 'HIT') {
         // HIT requires a selected opposing cup and removes it
         if (actor === 'bottom' && selectedTop.value != null) {
-            payload.affected_cup = selectedTop.value;
+            affectedCup = selectedTop.value;
             state.topPositions = state.topPositions.filter((p) => p !== selectedTop.value);
-            payload.opponent_cup_positions = payload.opponent_cup_positions.filter((p: number) => p !== selectedTop.value);
-            payload.opponent_cups_left = (payload.opponent_cup_positions as number[]).length;
             selectedTop.value = null;
         } else if (actor === 'top' && selectedBottom.value != null) {
-            payload.affected_cup = selectedBottom.value;
+            affectedCup = selectedBottom.value;
             state.bottomPositions = state.bottomPositions.filter((p) => p !== selectedBottom.value);
-            payload.opponent_cup_positions = payload.opponent_cup_positions.filter((p) => p !== selectedBottom.value);
-            payload.opponent_cups_left = (payload.opponent_cup_positions as number[]).length;
             selectedBottom.value = null;
         } else {
             // No cup selected for HIT; do nothing
@@ -227,41 +227,47 @@ async function createUpdate(type: GameUpdateType, actor: 'bottom' | 'top', actin
     } else if (type === 'EDGE') {
         // EDGE requires a selected opposing cup but does NOT remove it; send affected_cup for stats
         if (actor === 'bottom' && selectedTop.value != null) {
-            payload.affected_cup = selectedTop.value;
+            affectedCup = selectedTop.value;
         } else if (actor === 'top' && selectedBottom.value != null) {
-            payload.affected_cup = selectedBottom.value;
+            affectedCup = selectedBottom.value;
         } else {
             // No cup selected for EDGE; do nothing
             return;
         }
     }
 
-    // optimistic stats bump only; rack state already updated above for HIT only
-    bumpStats(actingUserId, type);
-    try {
-        const resp = await fetch(route('games.updates.store', { game: props.game.id }), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': getCsrfToken() ?? '',
-                'X-Requested-With': 'XMLHttpRequest',
-                Accept: 'application/json',
-            },
-            body: JSON.stringify(payload),
-            credentials: 'same-origin',
-        });
+    // Update the form data
+    updateForm.user_id = actingUserId;
+    updateForm.type = type;
+    updateForm.self_cup_positions = [...actorSelf];
+    updateForm.opponent_cup_positions = [...actorOpp];
+    updateForm.self_cups_left = actorSelf.length;
+    updateForm.opponent_cups_left = actorOpp.length;
+    updateForm.affected_cup = affectedCup;
 
-        if (!resp.ok) {
+    // For HIT, update opponent cup positions to reflect the removed cup
+    if (type === 'HIT' && affectedCup) {
+        updateForm.opponent_cup_positions = updateForm.opponent_cup_positions.filter(p => p !== affectedCup);
+        updateForm.opponent_cups_left = updateForm.opponent_cup_positions.length;
+    }
+
+    // NO optimistic stats bump - let WebSocket handle this
+
+    // Use Inertia's post method which handles CSRF automatically
+    updateForm.post(route('games.updates.store', { game: props.game.id }), {
+        preserveState: true,
+        preserveScroll: true,
+        onError: () => {
+            // Revert optimistic changes on error
             state.bottomPositions = revert.bottom;
             state.topPositions = revert.top;
-            await resp.json().catch(() => ({}));
             ensureSelectionsValid();
+        },
+        onSuccess: () => {
+            // Clear the form for next use
+            updateForm.reset();
         }
-    } catch (e) {
-        state.bottomPositions = revert.bottom;
-        state.topPositions = revert.top;
-        ensureSelectionsValid();
-    }
+    });
 }
 
 function listenWs() {
