@@ -1,0 +1,1000 @@
+php artisan migrate
+git add .
+git commit -m "API setup"
+git push
+cd work/JnicJumble/web/
+docker exec -it jumble-1 bash
+docker exec -it 4446cdd43a0df8c023e78d72dad13525bcc605ed75aee228883bc2f82a3160d21 bash
+docker exec -it 4446cdd43a0df8c023e78d72dad13525bcc605ed75aee228883bc2f82a3160d2 bash
+docker exec -it web-  bash
+docker exec -it web bash
+docker exec -it jumble bash
+docker exec jumble php artisan migrate:fresh --seed
+cd work/JnicJumble/
+code .
+cd work/JnicJumble/web/
+docker-compose up --build
+git add .
+git commit -m "Added endpoints and swagger documentation"
+git push
+cd work/JnicJumble/
+code .
+cd work/JnicJumble/
+docker-compose up --buils
+docker-compose up --build
+cd web/
+docker-compose up --build
+cd work/JnicJumble/
+git status
+git push
+docker exec -it jumble bash
+git status
+git add .
+docker exec -it jumble bash
+git add .
+git commit -m "use real maps and users""
+git commit -m "use real maps and users"
+git push
+git add .
+git commit -m "fixed users time endpoint"
+git push
+git add .
+git commit -m "Added post for submitting new time"
+git push
+git pull
+git pull --rebase
+git push
+cd work/JnicJumble/
+ls
+cd tm_server/
+ls
+run.sh
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+git pull
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+docker compose down
+git pull
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+docker network inspect
+docker network inspect bridge
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+docker compose down
+docker service logs jumble
+docker logs jumble
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+docker-compose stop && docker-compose up --build && docker-compose logs -f
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+docker-compose stop && docker-compose up --build && docker-compose logs -f
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+docker compose build
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+docker exec -it jumble bash
+explorer.exe .
+cd work/
+cd 
+ls
+cd work/
+ls
+code JnicJumble.code-workspace 
+cd JnicJumble/
+code .
+git status
+git push
+docker network inspect bridge
+cd work/JnicJumble/
+cd tm_server/
+ls
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+cd work/JnicJumble/web/
+ls
+docker compose up --build
+docker compose up --build -d
+docker compose up -d
+docker compose up --build -d
+docker compose up --build
+docker compose up --build -d
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+ls
+cd work/
+cd JnicJumble/
+ls
+cd tm_server/
+ls
+docker-compose up --build
+cd .
+cd ..
+ls
+code .
+ls
+cd work/JnicJumble/
+cd web/
+docker compose up --build -d
+cd work/JnicJumble/
+cd tm_server/
+ls
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+cd work/JnicJumble
+ls
+code .
+docker exec -it jumble bash
+git add .
+git status
+git add .
+git commit -m "Post PBs to web, and refresh widgets"
+git push
+cd work/JnicJumble/
+code .
+cd work/
+cd JnicJumble/
+cd tm_server/
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+cls
+clear
+docker-compose stop
+cd work/JnicJumble/web/
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+docker compose stop
+git status
+git add .
+git commit -m "new users get scores on all maps, and limit on average""
+git commit -m "new users get scores on all maps, and limit on average"
+git push
+cd ..
+git status
+git add .
+git commit -m "use limit"
+git push
+cd work/JnicJumble/
+cd web/
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+docker compose stop
+cd work/JnicJumble/tm_server/
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+docker compose stop
+cd work/JnicJumble/
+code .
+git pull
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+cd work/JnicJumble/tm_server/
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+cd work/JnicJumble/tm_server/
+cd ..
+cd web/
+docker-compose stop && docker-compose up -d && docker-compose logs -f
+composer require laravel/breeze --dev
+php artisan breeze:install
+docker exec -it jumble bash
+php artisan make:migration create_failed_jobs_table
+docker exec -it jumble bash
+git reset origin/main
+git reset origin/main --hard
+git clean -n
+git clean -n -d
+git clean -f
+git clean -n -d
+git clean -fd
+sudo git clean -fd
+cd jumble/
+composer require laravel/breeze --dev
+git add .
+git commit -m "allow http"
+git push
+git add .
+git commit -m "back to https"
+git push
+git add .
+git commit -m "Change seeder to be only whats necessary"
+git push
+cd work/
+ls
+cd JnicJumble/
+ls
+cd web/
+docker compose up --build
+cd work/JnicJumble/tm_server/
+docker compose stop
+docker compose up --build
+git status
+cd work/
+cd JnicJumble/
+cd web/
+docker compose stop
+docker compose up --build
+cd work/JnicJumble/web/
+docker compose down
+docker compose up --build
+docker exec -it jumble bash
+php artisan
+cd jumble/
+php artisan
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+npm run dev
+php artisan server
+php artisan serve
+npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
+npx tailwindcss init
+npm i bootstrap
+composer require laravel/ui
+php artisan ui
+php artisan uiphp artisan make:migration create_map_order_table
+xs jumble/
+cd jumble/
+php artisan make:migration create_map_order_table
+php artisan make:migration create_servers_table
+cd work/
+JnicJumble/web/
+cd JnicJumble/web/
+docker compose stop
+docker compose up --build
+cd work/JnicJumble/web/
+docker compose up --build
+php artisan make:factory MapOrderFactory
+cd jumble/
+php artisan make:factory MapOrderFactory
+php artisan make:factory ServerFactory
+php artisan make:model Server
+php artisan make:model MapOrder
+php artisan migrate:fresh --seed
+docker exec -it jumble bash
+php artisan make:view mapOrder
+git add .
+git commit -m "basic map order page"
+git push
+git add .
+git commit -m "Map orders paginated"
+git push
+cd work/JnicJumble/web/
+docker compose up --build
+cd work/JnicJumble/tm_server/
+docker compose up --build
+docker compose down
+docker compose up --build
+git pull
+docker compose up --build
+docker exec -it jumble bash
+cd work/JnicJumble/web/
+git pull
+docker compose up --build
+cd work/JnicJumble/web/
+docker compose up --build
+git pull
+git add .
+git commit -m "Add search to database query"
+git push
+cd work/JnicJumble/tm_server/
+docker compose up --build
+cd work/JnicJumble/web/
+docker compose up --build
+cd jumble/
+php artisan make:migration api_keys
+php artisan migrate
+docker exec -it jumble bash
+php artisan make:command GenerateApiKey
+php artisan app:generate-api-key
+php artisan make:model ApiKeys
+php artisan app:generate-api-key
+docker exec -it jumble bash
+php artisan make:middleware ApiKeyMiddleware
+php artisan make:exception AuthenticationException
+docker exec -it jumble bash
+cd jumble/
+php artisan make:middleware LogRequest
+php artisan make:model RequestLog -m
+docker exec -it jumble bash
+git add .
+git commit -m "Use api keys, and log all score updates"
+git pull
+git pull --rebase
+git add .
+git commit -m "merge"
+git pull
+git pull --no-rebase
+git push
+git pull
+git commit -m "Merge"
+git push
+cd work/JnicJumble/web/
+docker compose up --build
+cd work/JnicJumble/tm_server/
+docker compose up --build
+docker logs jumble -f
+cd work/JnicJumble/web/
+docker compose up --build
+cd jumble/
+docker exec -it jumble bash
+git add .
+git commit -m "StressTestSeeder"
+git push
+docker exec -it jumble bash
+docker exec jumble bash
+docker exec -it jumble bash
+git checkout -b johan/optimize
+php artisan make:model AverageRank -m
+docker exec jumble bash
+docker exec -it jumble bash
+cd jumble/
+php artisan make:model AverageRank -m
+docker exec -it jumble bash
+co work/JnicJumble/web/
+cd work/JnicJumble/web/
+cocker compose up --build
+docker compose up --build
+docker exec -it jumble bash
+docker compose up --build
+git add .
+git commit -m "More fast"
+git push
+git push --set-upstream origin johan/optimize
+cd work/JnicJumble/web/
+docker compose up --build
+docker exec -it jumble bash
+docker exec -it jumble bash
+cd work/JnicJumble/tm_server/
+docker compose up --build
+docker exec -it jumble bash
+docker compose up --build
+git pull
+git checkout master
+git checkout main
+git pull
+git checkout origin/update#1
+git fetch
+git checkout update#1
+git pull
+git add .
+git commit -m "Return json"
+git push
+git add .
+git commit -m "Update avg ranks in transaction"
+git push
+git add .
+git commit -m "add maps endpoint"
+git push
+git add .
+git commit -m "Unguarded fix"
+git push
+docker exec -it jumble bash
+docker exec -it jumble bash
+cd work/JnicJumble/web/
+docker compose up --build
+cd work/JnicJumble/web/
+git pull
+docker compose up --build
+docker exec -it jumble bash
+docker compose up --build
+cd work/JnicJumble/tm_server/
+docker compose up --build
+docker exec -it jumble bah
+docker exec -it jumble bash
+git checkoust master
+git checkoust main
+git checkout main
+git pull
+git add .
+git commit -m "Remove no longer used maps from maporder"
+git push
+cd work/JnicJumble/web/
+docker compose up --build
+cd work/JnicJumble/web/
+docker compose up --build
+git pull
+docker logs jumble -f
+cd work/JnicJumble/web/
+docker compose up --build
+cd work/JnicJumble/web/
+docker compose up --build
+docker exec -it jumble bash
+docker compose down
+docker logs jumble -f
+cd work/JnicJumble/web/
+docker compose up --build
+cd work/JnicJumble/tm_server/
+docker compose up --build
+cd work/JnicJumble/web/
+docker compose up --build
+cd work/JnicJumble/tm_server/
+docker compose up --build
+git pull
+docker compose up --build
+docker exec -it jumble bash
+git pull
+cd work/JnicJumble/
+git pull
+docker exec -it tm_server-mariadb-1 bash 
+cd work/JnicJumble/
+cd tm_server/
+docker compose up --build
+ls
+wo
+cd work/
+ls
+mkdir NTMC
+rm NTMC/
+rm -r NTMC/
+mkdir ntmc
+ls ntmc/
+cd ntmc/
+mkdir tmserver
+cd tmserver/
+cd ..
+wget http://files.v04.maniaplanet.com/server/TrackmaniaServer_Latest.zip
+cd tmserver/
+unzip ../TrackmaniaServer_Latest.zip
+sudo apt install unzip
+unzip ../TrackmaniaServer_Latest.zip
+chmod 777 TrackmaniaServer
+./TrackmaniaServer
+cd UserData/Config/
+cp dedicated_cfg.default.txt dedicated_cfg.txt
+nano dedicated_cfg.txt
+cd ../..
+./TrackmaniaServer /dedicated_cfg=dedicated_cfg.txt /game_settings=MatchSettings/example.txt
+code .
+./TrackmaniaServer /dedicated_cfg=dedicated_cfg.txt /game_settings=MatchSettings/example.txt
+./TrackmaniaServer
+./TrackmaniaServer /dedicated_cfg=dedicated_cfg.txt
+cd ..
+ls
+cd docker_server
+mkdir docker_server
+cd docker_server/
+code .
+sudo chown -R 9999:9999 Maps
+sudo chmod -R 777 Maps
+ls
+cd NTMC_1/
+sudo chown -R 9999:9999 Maps
+sudo chmod -R 777 Maps
+docker compose up
+cd work/ntmc/
+ld
+ls
+cd docker_server/NTMC_1/
+ls
+docker compose up
+chmod . 777
+chmod 777 .
+docker compose up
+chmod -R 777 .
+sudo chmod -R 777 .
+docker compose up
+cd ..
+chmod -r 777
+chmod -r 777 .
+chmod -R 777 .
+sudo chmod -R 777 .
+docker compose up
+cd tmserver/
+docker compose up
+cd work/
+ls
+cd JnicJumble/
+ls
+cd tm_server/
+ls
+code .
+cd ..
+code .
+ls
+cd work/
+ls
+cd ntmc/
+ls
+cd docker_server/
+ls
+docker compose up
+cd NTMC_1/
+ls
+cd work/
+ls
+cd ntmc/
+ls
+cd docker_server/
+ls
+cd tmserver/
+ls
+docker compose up --build
+cd work/
+ls
+cd ntmc/
+ls
+cd docker_server/
+ls
+code .
+cd work/ntmc/
+ls
+cd docker_server/
+ls
+cd tmserver/
+ls
+docker compose up --build
+cd ..
+ls
+sudo rm -R NTMC_1/
+ls
+git remote add origin git@github.com:JohanThomsen/TMServerBase.git
+git init -b main
+git init && git symbolic-ref HEAD refs/heads/main
+git add .
+git commit -m "First commit"
+git remote add origin git@github.com:JohanThomsen/TMServerBase.git
+git remote -v
+git push origin main
+git pull
+git branch --set-upstream-to=origin/<branch> main
+git pull origin/main
+git remote -v
+git fetch
+git pull
+git branch --set-upstream-to=origin/main
+git pull
+touch .gitignore
+git add .
+git commit -m "docker"
+git push
+cd tmserver/
+docker compose up --build
+ls
+cd work/
+ls
+git clone git@github.com:kacky-code/the_full_kackage.git
+cd the_full_kackage/
+ls
+cd api/¨
+cd api/
+phpstorm .
+cd work/the_full_kackage/
+ls
+cd tm/
+docker compose up --build
+ls
+git pull
+cd ..
+code .
+cd tm/
+docker compose up --build
+git pull
+docker compose up --build
+docker -v
+dpkg -l | grep docker
+docker -v
+sudo apt-get update
+sudo apt-get upgrade docker-ce
+curl -sSL https://get.docker.com/ | sudo bash
+docker -v
+docker-compose -v
+sudo apt-get remove docker-compose
+docker-compose -v
+sudo rm /usr/local/bin/docker-compose
+pip install docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/2.24.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+docker-compose -v
+docker -v
+docker compose up --build
+cd UserData/Config/
+ls
+chmod 777 .
+cd ..
+cd..
+cd ..
+docker compose up --build
+chmod a+rw tm/minicontrol 
+chmod a+rw tm/UserData/Maps + Config
+cd ..
+chmod a+rw tm/minicontrol 
+chmod a+rw tm/UserData/Maps + Config
+chmod a+rw tm/minicontrol
+chmod a+rw tm/UserData/Maps + Config
+chmod a+rw tm/UserData/Maps
+chmod a+rw tm/UserData/Config
+docker compose up --build
+c dtm
+cd tm/
+docker compose up --build
+cd work/
+ls
+cd the_full_kackage/
+ls
+cd api/
+ls
+docker-compose up --build
+ls
+cd web/
+ls
+composer install
+cd ..
+ls
+docker-compose up --build
+cd work/
+ls
+cd the_full_kackage/
+ls
+cd api/
+git pull
+docker exec -it recordsapi bash
+ls
+docker compose up --build
+cd ..
+cd tm/
+ls
+cd Us
+cd UserData/
+chmod -R 777 .
+sudo chmod -R 777 .
+docker exec -it recordsapi bash 
+docker exec -it recordsapi bash
+composer require laravel/framework:^10.30
+cd web/
+composer require laravel/framework:^10.30
+docker exec -it recordsapi bash 
+cd work/
+ls
+cd the_full_kackage/tm/
+ls
+docker-composer down
+docker-compose down
+docker compose up --build
+git checkout -b joth/refactor_api
+git push
+git push --set-upstream origin joth/refactor_api
+git push
+git push --set-upstream origin joth/refactor_api
+git pull
+git checkout main
+git pull
+git checkout joth/refactor_api 
+git merge main
+git commit -m "merge main"
+git push
+cd
+ls
+cd work/
+ls
+cd ntmc/
+ls
+cd tmserver/
+ls
+git
+git status
+ls
+cd UserData/
+ls
+git status
+cd ../..
+cd ..
+ls
+cd JnicJumble/
+ls
+git status
+git 
+git branch
+cd ..
+ls
+cd ntmc/
+git status
+ls
+cd docker_server/
+ls
+git status
+git branch
+code .
+ls
+cd tmserver/
+ls
+git add docker-compose.yml 
+git status
+git push
+ls
+cd work/
+ls
+cd ntmc/
+ls
+code .
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+cd docker_server/
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+ls
+cd NTMC_1/
+ls
+cd ..
+ls
+cd docker_server/
+ls
+cd tmserver/
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+cd work/
+ls
+cd JnicJumble/
+ls
+cd tm_server/
+ls
+code .
+git pull
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+cd ..
+ls
+cd tm_server/
+ls
+chmod  777 UserData
+chmod  777 UserData/
+chmod -R 777 UserData/
+sudo chmod -R 777 UserData/Maps/
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+cd UserData/Maps/Campaigns/Inferno/
+ls
+cd ../../../
+cd ..
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+docker exec -it web bash
+docker exec -it jumble bash
+cd work/
+cd JnicJumble/
+ls
+code .
+git checkout -b joth/inferno
+cd work/JnicJumble/
+ls
+cd tm_server/
+ls
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+cd work/
+ls
+cd JnicJumble/
+ls
+cd web/
+ls
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+git pull
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+git add .
+git commit -m "Ignore"
+git push
+git add .
+git commit -m "Change info"
+git push
+git add .
+git commit -m "Ignore"
+git add .
+php artisan
+docker exec -it jumble bash
+git add .
+git commit -m "Add historic stuff"
+git push
+docker exec -it jumble bash
+git add .
+git commit -m "Better order by"
+git push
+docker exec -it jumble bash
+ls
+docker compose up --build
+ls
+cd work/
+ls
+cd JnicJumble/
+ls
+cd web/
+ls
+l
+ls
+cd thm
+cd thumbs/
+ls
+cd ..
+cd jumble/
+ls
+cd ..
+git pull
+code .
+ls
+git add .
+git commit -m "Temp remove previous edition tab"
+git pusj
+git push
+git add .
+git commit -m "Add new logo"
+git push
+git add .
+git commit -m "Remove thumbnails"
+git push
+git add .
+git commit -m "Fix"
+git push
+git add .
+git commit -m "fix"
+git push
+git add .
+git commit -m "Add command to add unplayed scores to new map"
+git push
+git add .
+git commit -m "fix"
+git push
+git add .
+git commit -m "FIX"
+GIT PUSH
+git push
+ls
+cd work/
+ls
+mkdir wgamer
+cd wgamer/
+cd ../..
+ls
+cd /mnt
+ls
+cd c
+ls
+cd Users/johan/Desktop/Wgamer2020/
+ls
+cd docker_wcompetition_2020/
+ls
+cd wcompetition/
+ls
+cd docker/
+ls
+docker compose build
+sudo docker compose build
+cd ..
+cp . ~/work/wgamer
+cp . ~/work/wgamer -r
+cd :~/work/wgamer
+cd ~/work/wgamer
+ls
+cd Wg
+cd docker_wcompetition_2020/
+ls
+cd wcompetition/docker/
+docker compose build
+code .
+docker compose build
+docker compose up+build
+docker compose build
+docker compose build -d
+docker compose up -d
+docker-compose stop && docker-compose up --build -d && docker-compose logs -f
+cd ..
+chmod -R 777 .
+cd wcompetition/docker/
+ls
+docker-compose stop && docker-compose up --build -d
+chmod -R 777 .
+cd ..
+ls
+cd ..
+ls
+cd wcompetition/
+ls
+cd docker/
+ls
+cd ControllerData/
+ls
+cd plugins/
+ls
+cd ..
+cd docker/
+docker-compose stop && docker-compose up --build -d
+cd ~
+ls
+cd ..
+ls
+cd work/
+/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.4)"
+cd work/
+ls
+composer global require laravel/installer
+mkdir beerpongstats
+cd beerpongstats/
+laravel new beerpongstats
+npm install -g npm
+ls
+cd beerpongstats/
+npm install && npm run build
+composer run dev
+php artisan
+php artisan serve
+npm install
+# Download and install nvm:
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+# in lieu of restarting the shell
+\. "$HOME/.nvm/nvm.sh"
+# Download and install Node.js:
+nvm install 22
+# Verify the Node.js version:
+node -v # Should print "v22.18.0".
+nvm current # Should print "v22.18.0".
+# Verify npm version:
+npm -v # Should print "10.9.3".
+nvm install 22
+node -v 
+npm -v
+npm install && npm run build
+php artisan serve
+ls
+code .
+phpstorm .
+chmod -R 777 .
+npm build
+npm run build
+composer install
+bpm build
+npm build
+nvm -v
+nvm install 22
+npm run build
+npm
+npm run down
+npm run
+npm run build
+npm run dev
+php artisan serve
+cd work/beerpongstats/beerpongstats/
+docker exec -it beerpongstats-site
+docker exec -it beerpongstats-site bash
+docker ps
+ompose logs node
+docker-compose logs node
+docker compose logs node
+docker-compose stop node
+docker-compose rm node
+docker-compose up --build nod
+docker compose rm node
+docker-compose up --build node
+docker exec -it beerpongstats-node ps aux | grep vite
+docker exec -it beerpongstats-node npm run dev
+docker-compose down
+docker-compose up --build
+ls
+docker volume create portainer_data
+docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
+ls
+cd work/
+cd beerpongstats/
+ls
+cd ~
+cd ..
+cd /home/johan/work/beerpongstats/beerpongstats/
+docker-compose build
+docker-compose up -d
+docker exec -it beerpongstats-site 
+php artisan migrate
+php artisan conifg
+php artisan config:show
+php artisan config
+php artisan config:show database
+docker exec -it beerpongstats-site 
+docker exec -it beerpongstats-site bash
+docker exec -it beerpongstats-db bash
+docker exec -it beerpongstats-site 
+docker exec -it beerpongstats-site bash
+docker-compose build
+docker-compose up
+docker-compose build
+docker-compose down -v && docker-compose up --build
+docker-compose down && docker-compose up --build
+docker-compose down
+docker-compose up --build
+docker compose down
+docker container prune
+docker-compose up --build
+docker-compose down
+docker-compose up --build
+docker compose down && docker-compose up --build
+docker-compose down
+docker-compose up -d
+php artisan migrate:fresh --seed
+netstat -ano | findstr :80
+docker ps
+curl -I http://localhost:80
+wsl -e sudo service apache2 stop
+sudo service apache2 stop
+cd /home/johan/work/beerpongstats/beerpongstats && php artisan route:list --name=games.store
+cd /home/johan/work/beerpongstats/beerpongstats && php artisan route:list | grep games
+cd /home/johan/work/beerpongstats/beerpongstats && tail -20 storage/logs/laravel.log
+cd /home/johan/work/beerpongstats/beerpongstats && tail -50 storage/logs/laravel.log | grep -A 5 -B 5 "validation\|error\|exception"
+cd /home/johan/work/beerpongstats/beerpongstats && php artisan config:cache && php artisan route:cache
+composer require laravel/telescope
+cd /home/johan/work/beerpongstats/beerpongstats && php artisan test tests/Feature/GameUpdates/GameUpdateControllerTest.php
+cd /home/johan/work/beerpongstats/beerpongstats && php artisan test tests/Feature/GameUpdates/GameUpdateControllerTest.php --verbose
+cd /home/johan/work/beerpongstats/beerpongstats && php -l tests/Feature/GameUpdates/GameUpdateControllerTest.php
+cd /home/johan/work/beerpongstats/beerpongstats && php artisan test tests/Feature/GameUpdates/GameUpdateControllerTest.php
