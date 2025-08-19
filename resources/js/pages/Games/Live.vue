@@ -244,6 +244,7 @@ async function createUpdate(type: GameUpdateType, actor: 'bottom' | 'top', actin
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': getCsrfToken() ?? '',
+                'X-Requested-With': 'XMLHttpRequest',
                 Accept: 'application/json',
             },
             body: JSON.stringify(payload),
