@@ -68,21 +68,32 @@ chmod -R ug+rwX storage bootstrap/cache 2>/dev/null || true
 
 # Optionally wait for DB and run migrations
 if [ "${MIGRATE_ON_START}" = "true" ]; then
-  echo "[entrypoint] Waiting for database to be ready before running migrations..."
+  echo "[entrypoint] Waiting for database connection (${DB_HOST}:${DB_PORT:-3306})..."
   i=0
-  until php artisan migrate:status --no-interaction >/dev/null 2>&1; do
+  until php -d detect_unicode=0 -r '
+    $h=getenv("DB_HOST")?:"db"; $p=getenv("DB_PORT")?:3306; $d=getenv("DB_DATABASE")?:"forge"; $u=getenv("DB_USERNAME")?:"root"; $pw=getenv("DB_PASSWORD")?:"";
+    try { new PDO("mysql:host={$h};port={$p};dbname={$d}", $u, $pw, [PDO::ATTR_TIMEOUT=>2]); echo "ok\n"; } catch (Throwable $e) { http_response_code(1); }
+  ' >/dev/null 2>&1; do
     i=$((i+1))
-    if [ "$i" -ge 60 ]; then
-      echo "[entrypoint] Database not ready after waiting; skipping migrations."
+    if [ "$i" -ge 120 ]; then
+      echo "[entrypoint] DB still unreachable after ~4 minutes; continuing without migrations."
       break
     fi
     sleep 2
   done
 
-  if php artisan migrate:status --no-interaction >/dev/null 2>&1; then
+  if php -r '
+    $h=getenv("DB_HOST")?:"db"; $p=getenv("DB_PORT")?:3306; $d=getenv("DB_DATABASE")?:"forge"; $u=getenv("DB_USERNAME")?:"root"; $pw=getenv("DB_PASSWORD")?:"";
+    try { new PDO("mysql:host={$h};port={$p};dbname={$d}", $u, $pw, [PDO::ATTR_TIMEOUT=>2]); echo "ok\n"; } catch (Throwable $e) { http_response_code(1); }
+  ' >/dev/null 2>&1; then
     echo "[entrypoint] Running database migrations..."
     php artisan migrate --force --no-interaction || true
   fi
+fi
+
+# Ensure public/storage symlink exists
+if [ ! -L public/storage ]; then
+  php artisan storage:link >/dev/null 2>&1 || true
 fi
 
 # In production, optionally cache config/routes for speed
