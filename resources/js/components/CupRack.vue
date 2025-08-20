@@ -50,11 +50,8 @@ function onClick(id: number) {
 
 <template>
     <div class="rack">
-        <div v-if="title" class="title">{{ title }}</div>
+        <div v-if="title && !inverted" class="title">{{ title }}</div>
         <div class="board" :class="{ 'board--inverted': !!inverted }">
-            <svg viewBox="0 0 100 70" class="triangle" aria-hidden="true">
-                <path d="M5 65 L95 65 L50 5 Z" fill="none" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" />
-            </svg>
             <button
                 v-for="p in layout"
                 :key="p.id"
@@ -73,6 +70,7 @@ function onClick(id: number) {
                 <span class="dot" />
             </button>
         </div>
+        <div v-if="title && inverted" class="title">{{ title }}</div>
     </div>
 </template>
 

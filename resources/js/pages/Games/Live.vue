@@ -315,13 +315,13 @@ const canHitBottom = computed(() => selectedBottom.value != null);
                     @select="(id) => (selectedTop = id)"
                 />
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    <div v-for="p in bottomActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
+                    <div v-for="p in topActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-sm font-medium truncate">{{ p.name }}</span>
                             <div class="flex items-center gap-1">
-                                <Button size="sm" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('HIT','bottom', p.id)">Hit</Button>
-                                <Button size="sm" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('EDGE','bottom', p.id)">Edge</Button>
-                                <Button size="sm" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','bottom', p.id)">Miss</Button>
+                                <Button size="sm" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('HIT','top', p.id)">Hit</Button>
+                                <Button size="sm" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('EDGE','top', p.id)">Edge</Button>
+                                <Button size="sm" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','top', p.id)">Miss</Button>
                             </div>
                         </div>
                         <div class="text-xs text-muted-foreground">
@@ -336,10 +336,6 @@ const canHitBottom = computed(() => selectedBottom.value != null);
                 </div>
             </section>
 
-            <div class="text-center">
-                <div class="text-sm text-muted-foreground">Team one</div>
-            </div>
-
             <!-- Bottom side: authenticated user's team when possible -->
             <section class="space-y-3">
                 <CupRack
@@ -351,13 +347,13 @@ const canHitBottom = computed(() => selectedBottom.value != null);
                     @select="(id) => (selectedBottom = id)"
                 />
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    <div v-for="p in topActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
+                    <div v-for="p in bottomActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-sm font-medium truncate">{{ p.name }}</span>
                             <div class="flex items-center gap-1">
-                                <Button size="sm" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('HIT','top', p.id)">Hit</Button>
-                                <Button size="sm" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('EDGE','top', p.id)">Edge</Button>
-                                <Button size="sm" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','top', p.id)">Miss</Button>
+                                <Button size="sm" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('HIT','bottom', p.id)">Hit</Button>
+                                <Button size="sm" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('EDGE','bottom', p.id)">Edge</Button>
+                                <Button size="sm" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','bottom', p.id)">Miss</Button>
                             </div>
                         </div>
                         <div class="text-xs text-muted-foreground">
