@@ -33,7 +33,7 @@ class TeamController extends Controller
             abort(403, 'You must be logged in to create a team.');
         }
 
-        $users = User::all();
+        $users = User::whereNot('name', 'placeholder1')->whereNot('name', 'placeholder2')->get();
         $currentUser = User::find(Auth::id());
 
         return Inertia::render('Teams/Create', [
