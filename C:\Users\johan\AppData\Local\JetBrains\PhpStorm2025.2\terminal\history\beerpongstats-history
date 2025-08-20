@@ -1,53 +1,3 @@
-php artisan migrate
-git add .
-git commit -m "API setup"
-git push
-cd work/JnicJumble/web/
-docker exec -it jumble-1 bash
-docker exec -it 4446cdd43a0df8c023e78d72dad13525bcc605ed75aee228883bc2f82a3160d21 bash
-docker exec -it 4446cdd43a0df8c023e78d72dad13525bcc605ed75aee228883bc2f82a3160d2 bash
-docker exec -it web-  bash
-docker exec -it web bash
-docker exec -it jumble bash
-docker exec jumble php artisan migrate:fresh --seed
-cd work/JnicJumble/
-code .
-cd work/JnicJumble/web/
-docker-compose up --build
-git add .
-git commit -m "Added endpoints and swagger documentation"
-git push
-cd work/JnicJumble/
-code .
-cd work/JnicJumble/
-docker-compose up --buils
-docker-compose up --build
-cd web/
-docker-compose up --build
-cd work/JnicJumble/
-git status
-git push
-docker exec -it jumble bash
-git status
-git add .
-docker exec -it jumble bash
-git add .
-git commit -m "use real maps and users""
-git commit -m "use real maps and users"
-git push
-git add .
-git commit -m "fixed users time endpoint"
-git push
-git add .
-git commit -m "Added post for submitting new time"
-git push
-git pull
-git pull --rebase
-git push
-cd work/JnicJumble/
-ls
-cd tm_server/
-ls
 run.sh
 docker-compose stop && docker-compose up --build -d && docker-compose logs -f
 git pull
@@ -998,3 +948,53 @@ cd /home/johan/work/beerpongstats/beerpongstats && php artisan test tests/Featur
 cd /home/johan/work/beerpongstats/beerpongstats && php artisan test tests/Feature/GameUpdates/GameUpdateControllerTest.php --verbose
 cd /home/johan/work/beerpongstats/beerpongstats && php -l tests/Feature/GameUpdates/GameUpdateControllerTest.php
 cd /home/johan/work/beerpongstats/beerpongstats && php artisan test tests/Feature/GameUpdates/GameUpdateControllerTest.php
+sh -n docker/entrypoint.sh && echo OK || echo FAIL
+git add .
+git commit
+git commit -m "Fix dockerfile"
+git push
+git add .
+git commit -m "Update entrypoint"
+git push
+git add .
+git commit -m "Nginx config change"
+git push
+sh -n docker/entrypoint.sh && echo OK || echo FAIL
+git add .
+git commit -m "Try again"
+git push
+git rm --cached docker-compose.prod.yml 
+git rm --cached docker-compose.prod.yml -f
+git rm --cached nginx.prod.conf -f
+git rm --cached nginx.dev.conf -f
+git rm --cached docker-compose.dev.yml -f
+git add .
+git commit -m "Add nginx dev and prod configs"
+git push
+git ad .
+git add .
+git commit -m "Entrypoint update"
+git push
+git add .
+git commit -m "Try fixing 419 error"
+git push
+git add .
+git commit -m "Use Inertia to fix 419 and for consistency"
+git push
+git add .
+git commit -m "make simple deploy command"
+git push
+chmod +x deploy.bat
+./deploy.bat 
+docker compose -f docker-compose.yml -f docker-compose.dev.yml down --remove-orphans
+docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile dev down --remove-orphans
+chmod +x deploy.bat
+chmod +x deploy-dev.bat 
+chmod +x down-dev.bat 
+./deploy-dev.bat 
+./down-dev.bat 
+./deploy-dev.bat 
+./down-dev.bat 
+git add .
+git commit -m "Add deploy commands"
+git push

@@ -16,5 +16,10 @@ COPY . .
 # Expose the port Vite runs on
 EXPOSE 5173
 
+# Create a startup script to ensure node_modules is available
+RUN echo '#!/bin/bash\nif [ ! -d "node_modules" ] || [ ! -f "node_modules/.bin/vite" ]; then\n  echo "Installing node dependencies..."\n  npm install\nfi\n# Always patch lucide sourcemaps to avoid esbuild crashes in dev\nif [ -f "scripts/patch-lucide-sourcemaps.js" ]; then\n  echo "Patching lucide-vue-next sourcemaps..."\n  node ./scripts/patch-lucide-sourcemaps.js || true\nfi\n# Clear Vite optimize cache to avoid stale prebundles\nrm -rf node_modules/.vite || true\nexec "$@"' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
 # Start the Vite server
 CMD ["npm", "run", "dev"]

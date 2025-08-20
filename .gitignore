@@ -26,3 +26,4 @@ yarn-error.log
 docker-compose.yml
 docker-compose.prod.yml
 docker-compose.dev.yml
+

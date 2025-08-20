@@ -1,0 +1,34 @@
+# Ignore VCS and IDE files
+.git
+.gitignore
+.idea
+.vscode
+
+# Node
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# PHP/Laravel
+vendor
+storage/*.key
+storage/logs
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+# Exclude testing disks to avoid permission issues in build context
+storage/framework/testing/**
+bootstrap/cache/*.php
+
+# Env and local files
+.env
+.env.*
+.DS_Store
+
+# Frontend build output
+public/build
+
+# Docker artifacts
+*.tar
