@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import CupRack from '@/components/CupRack.vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { echo } from '@laravel/echo-vue';
 import { useForm } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
@@ -64,6 +65,13 @@ function bumpStats(userId: number | null | undefined, type: GameUpdateType | str
 
 const selectedTop = ref<number | null>(null);
 const selectedBottom = ref<number | null>(null);
+
+// Rerack modal state
+const rerackModalOpen = ref(false);
+const rerackSelectedTeam = ref<'top' | 'bottom' | null>(null);
+const rerackTempPositions = ref<number[]>([]);
+const rerackNewPositions = ref<number[]>([]);
+const rerackStep = ref<'select-team' | 'position-cups'>('select-team');
 
 // Use Inertia form for CSRF-safe requests
 const updateForm = useForm({
@@ -294,6 +302,130 @@ onUnmounted(() => {
 const canEdit = computed(() => !!props.isParticipant && !!props.authUserId && !props.game.is_ended);
 const canHitTop = computed(() => selectedTop.value != null);
 const canHitBottom = computed(() => selectedBottom.value != null);
+
+// Rerack functions
+function openRerackModal() {
+    rerackModalOpen.value = true;
+    rerackSelectedTeam.value = null;
+    rerackTempPositions.value = [];
+    rerackNewPositions.value = [];
+    rerackStep.value = 'select-team';
+}
+
+function selectTeamForRerack(team: 'top' | 'bottom') {
+    rerackSelectedTeam.value = team;
+    const currentPositions = team === 'top' ? state.topPositions : state.bottomPositions;
+    rerackTempPositions.value = [...currentPositions];
+    rerackNewPositions.value = [];
+    rerackStep.value = 'position-cups';
+}
+
+function proceedToPositioning() {
+    rerackNewPositions.value = [];
+    rerackStep.value = 'position-cups';
+}
+
+function placeCupAtPosition(position: number) {
+    if (rerackStep.value !== 'position-cups') return;
+
+    // Don't allow placing on occupied positions
+    if (rerackNewPositions.value.includes(position)) return;
+
+    // Add this position to the new positions
+    if (rerackNewPositions.value.length < rerackTempPositions.value.length) {
+        rerackNewPositions.value.push(position);
+    }
+}
+
+function removeCupFromPosition(position: number) {
+    if (rerackStep.value !== 'position-cups') return;
+    const index = rerackNewPositions.value.indexOf(position);
+    if (index > -1) {
+        rerackNewPositions.value.splice(index, 1);
+    }
+}
+
+function applyRerack() {
+    if (!rerackSelectedTeam.value || rerackNewPositions.value.length !== rerackTempPositions.value.length) return;
+
+    // Create update based on which team is being reracked
+    const actingUserId = props.authUserId!;
+    const isBottomTeamRerack = rerackSelectedTeam.value === 'bottom';
+
+    // Update the positions optimistically
+    if (isBottomTeamRerack) {
+        state.bottomPositions = [...rerackNewPositions.value];
+    } else {
+        state.topPositions = [...rerackNewPositions.value];
+    }
+
+    // Prepare form data for the update
+    updateForm.user_id = actingUserId;
+    updateForm.type = 'RERACK' as GameUpdateType;
+
+    if (isBottomTeamRerack) {
+        updateForm.self_cup_positions = [...rerackNewPositions.value];
+        updateForm.opponent_cup_positions = [...state.topPositions];
+        updateForm.self_cups_left = rerackNewPositions.value.length;
+        updateForm.opponent_cups_left = state.topPositions.length;
+    } else {
+        updateForm.self_cup_positions = [...state.bottomPositions];
+        updateForm.opponent_cup_positions = [...rerackNewPositions.value];
+        updateForm.self_cups_left = state.bottomPositions.length;
+        updateForm.opponent_cups_left = rerackNewPositions.value.length;
+    }
+
+    updateForm.affected_cup = null;
+
+    // Submit the rerack update
+    updateForm.post(route('games.updates.store', { game: props.game.id }), {
+        preserveState: true,
+        preserveScroll: true,
+        onError: () => {
+            // Revert optimistic changes on error
+            hydrateFromLatest();
+        },
+        onSuccess: () => {
+            // Clear the form for next use
+            updateForm.reset();
+            // Close modal
+            rerackModalOpen.value = false;
+        }
+    });
+}
+
+function cancelRerack() {
+    rerackModalOpen.value = false;
+    rerackSelectedTeam.value = null;
+    rerackTempPositions.value = [];
+    rerackNewPositions.value = [];
+    rerackStep.value = 'select-team';
+}
+
+// Cup rack layout positions - using the same layout as CupRack component but with increased spacing
+const positions10 = [
+    { id: 1, x: 50, y: 27 },
+    { id: 2, x: 40, y: 47 },
+    { id: 3, x: 60, y: 47 },
+    { id: 4, x: 30, y: 67 },
+    { id: 5, x: 50, y: 67 },
+    { id: 6, x: 70, y: 67 },
+    { id: 7, x: 20, y: 87 },
+    { id: 8, x: 40, y: 87 },
+    { id: 9, x: 60, y: 87 },
+    { id: 10, x: 80, y: 87 },
+] as const;
+
+const positions6 = [
+    { id: 1, x: 50, y: 37 },
+    { id: 2, x: 38, y: 62 },
+    { id: 3, x: 62, y: 62 },
+    { id: 4, x: 26, y: 87 },
+    { id: 5, x: 50, y: 87 },
+    { id: 6, x: 74, y: 87 },
+] as const;
+
+const rerackLayout = computed(() => (cupsCount.value === 10 ? positions10 : positions6));
 </script>
 
 <template>
@@ -336,6 +468,83 @@ const canHitBottom = computed(() => selectedBottom.value != null);
                 />
             </section>
 
+            <!-- Rerack Button -->
+            <div class="flex justify-center">
+                <Dialog v-model:open="rerackModalOpen">
+                    <DialogTrigger as-child>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            :disabled="!canEdit"
+                            @click="openRerackModal"
+                        >
+                            Rerack
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent class="max-w-lg">
+                        <DialogHeader>
+                            <DialogTitle>Rerack Cups</DialogTitle>
+                        </DialogHeader>
+                        <div class="space-y-4">
+                            <p class="text-sm text-muted-foreground">
+                                Select a team to rerack. All remaining cups will be repositioned.
+                            </p>
+                            <div v-if="rerackStep === 'select-team'" class="flex gap-2">
+                                <Button
+                                    class="flex-1"
+                                    @click="selectTeamForRerack('top')"
+                                >
+                                    Rerack {{ participantsLabelTop }}
+                                </Button>
+                                <Button
+                                    class="flex-1"
+                                    @click="selectTeamForRerack('bottom')"
+                                >
+                                    Rerack {{ participantsLabelBottom }}
+                                </Button>
+                            </div>
+                            <div v-else-if="rerackStep === 'position-cups'" class="space-y-4">
+                                <p class="text-sm text-muted-foreground">
+                                    Click on the rack positions where you want to place the {{ rerackTempPositions.length }} cups ({{ rerackNewPositions.length }}/{{ rerackTempPositions.length }} placed):
+                                </p>
+
+                                <!-- Visual Cup Rack for Positioning -->
+                                <div class="rack">
+                                    <div class="board">
+                                        <button
+                                            v-for="position in rerackLayout"
+                                            :key="position.id"
+                                            type="button"
+                                            class="cup"
+                                            :style="{ left: position.x + '%', top: position.y + '%' }"
+                                            :class="[
+                                                rerackNewPositions.includes(position.id) ? 'cup--placed' : 'cup--empty',
+                                                'cup--clickable'
+                                            ]"
+                                            :title="`Position ${position.id}`"
+                                            @click="rerackNewPositions.includes(position.id) ? removeCupFromPosition(position.id) : placeCupAtPosition(position.id)"
+                                        >
+                                            <span class="dot" />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end gap-2">
+                                    <Button variant="outline" @click="() => rerackStep = 'select-team'">Back</Button>
+                                    <Button variant="outline" @click="cancelRerack">Cancel</Button>
+                                    <Button
+                                        :disabled="rerackNewPositions.length !== rerackTempPositions.length"
+                                        @click="applyRerack"
+                                    >
+                                        Apply Rerack ({{ rerackNewPositions.length }}/{{ rerackTempPositions.length }} cups)
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </div>
+
             <!-- Bottom side: authenticated user's team when possible -->
             <section class="space-y-0">
                 <CupRack
@@ -377,3 +586,90 @@ const canHitBottom = computed(() => selectedBottom.value != null);
         </div>
     </AppLayout>
 </template>
+
+<style scoped>
+/* Rerack modal cup positioning styles - matches CupRack component */
+.rack {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.board {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 100 / 70;
+    margin-inline: auto;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+}
+
+.cup {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 16%; /* Increased from 11% to make cups bigger */
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    display: grid;
+    place-items: center;
+    border: 2px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: all 120ms ease;
+}
+
+.cup--empty {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.cup--empty:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+}
+
+.cup--placed {
+    background: #3b82f6;
+    border-color: #2563eb;
+}
+
+.cup--placed:hover {
+    background: #2563eb;
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.25);
+}
+
+.cup--clickable {
+    cursor: pointer;
+}
+
+.dot {
+    width: 32%;
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    opacity: 0.9;
+}
+
+.cup--empty .dot {
+    background: #cbd5e1;
+}
+
+.cup--placed .dot {
+    background: white;
+}
+
+:where(html.dark) .cup--empty {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+:where(html.dark) .cup--empty:hover {
+    background: #1e293b;
+    border-color: #475569;
+}
+
+:where(html.dark) .cup--empty .dot {
+    background: #475569;
+}
+</style>
