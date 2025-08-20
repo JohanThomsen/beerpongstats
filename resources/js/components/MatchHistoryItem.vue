@@ -54,7 +54,7 @@ const displayScore = computed(() => {
             if (scoreParts[1].trim() === '0') {
                 return 'Win'
             }
-            return scoreParts[1] + ' Cups left'
+            return scoreParts[1] + ' left'
         }
         // Fallback to full score if format is unexpected
         return props.score

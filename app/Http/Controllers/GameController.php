@@ -118,7 +118,7 @@ class GameController extends Controller
             $game->teams()->attach($teamPivotData);
         }
 
-        return Redirect::route('user.match-history', ['user' => Auth::id()])->with('success', 'Game created successfully.');
+        return Redirect::route('games.live', ['game' => $game->id])->with('success', 'Game created successfully.');
     }
 
     public function live(Game $game)
