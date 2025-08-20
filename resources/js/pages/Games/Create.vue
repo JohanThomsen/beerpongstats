@@ -146,6 +146,7 @@ import { computed } from 'vue'
 interface User {
     id: number
     name: string
+    email?: string
 }
 
 interface Team {

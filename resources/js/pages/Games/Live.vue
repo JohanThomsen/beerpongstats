@@ -125,6 +125,29 @@ const topActors = computed<Array<{ id: number; name: string }>>(() => {
     return (teams?.[1]?.users ?? []) as Array<{ id: number; name: string }>;
 });
 
+// Check if opponent should be hidden (placeholder users/teams)
+const shouldShowOpponent = computed(() => {
+    if (props.game.is_solo) {
+        // For solo games, check if any opponent is a placeholder user
+        const opponents = topActors.value;
+        return !opponents.some(opponent =>
+            opponent.name === 'placeholder1' || opponent.name === 'placeholder2'
+        );
+    } else {
+        // For team games, check if opponent team is placeholder team
+        const teams = (props.participants as any)?.teams ?? [];
+        const authId = props.authUserId;
+        if (authId) {
+            const idxAuthTeam = [0, 1].find((i) => teams?.[i]?.users?.some?.((u: any) => u.id === authId));
+            const otherIdx = idxAuthTeam === 0 ? 1 : 0;
+            const opponentTeam = teams?.[otherIdx!];
+            return opponentTeam?.name !== 'placeholder team';
+        } else {
+            // If no auth user, check if second team is placeholder
+            return teams?.[1]?.name !== 'placeholder team';
+        }
+    }
+});
 const bottomUserIds = computed<number[]>(() => bottomActors.value.map((u) => u.id));
 function isBottomUser(userId: number | null | undefined): boolean {
     if (userId == null) return true;
@@ -309,7 +332,16 @@ function openRerackModal() {
     rerackSelectedTeam.value = null;
     rerackTempPositions.value = [];
     rerackNewPositions.value = [];
-    rerackStep.value = 'select-team';
+
+    // In practice mode, skip team selection and go straight to positioning the target cups
+    if (!shouldShowOpponent.value) {
+        rerackSelectedTeam.value = 'top'; // Always rerack the target cups in practice mode
+        rerackTempPositions.value = [...state.topPositions];
+        rerackNewPositions.value = [];
+        rerackStep.value = 'position-cups';
+    } else {
+        rerackStep.value = 'select-team';
+    }
 }
 
 function selectTeamForRerack(team: 'top' | 'bottom') {
@@ -426,6 +458,41 @@ const positions6 = [
 ] as const;
 
 const rerackLayout = computed(() => (cupsCount.value === 10 ? positions10 : positions6));
+
+// End the practice game (simulate opponent hitting all remaining cups)
+function endPracticeGame() {
+    if (!canEdit.value || !shouldShowOpponent.value === false) return;
+
+    // Get the first opponent actor (placeholder user/team)
+    const opponentActor = topActors.value[0];
+    if (!opponentActor) return;
+
+    // Clear all player cups (simulate opponent hitting everything)
+    state.bottomPositions = [];
+
+    // Update the form data to simulate opponent hitting all cups
+    updateForm.user_id = opponentActor.id;  // Use opponent's ID
+    updateForm.type = 'HIT';
+    updateForm.self_cup_positions = [...state.topPositions];  // Opponent's cups stay the same
+    updateForm.opponent_cup_positions = [];  // Player's cups are all gone
+    updateForm.self_cups_left = state.topPositions.length;
+    updateForm.opponent_cups_left = 0;  // Player has 0 cups left
+    updateForm.affected_cup = null;
+
+    // Submit the game-ending update from opponent's perspective
+    updateForm.post(route('games.updates.store', { game: props.game.id }), {
+        preserveState: true,
+        preserveScroll: true,
+        onError: () => {
+            // Revert on error
+            hydrateFromLatest();
+        },
+        onSuccess: () => {
+            // Clear the form for next use
+            updateForm.reset();
+        }
+    });
+}
 </script>
 
 <template>
@@ -436,7 +503,7 @@ const rerackLayout = computed(() => (cupsCount.value === 10 ? positions10 : posi
             </div>
 
             <!-- Top side: opponent; triangle inverted visually -->
-            <section class="space-y-0">
+            <section v-if="shouldShowOpponent" class="space-y-0">
                 <div class="grid gap-2 cols-2">
                     <div v-for="p in topActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
                         <div class="flex items-center justify-between gap-2">
@@ -466,6 +533,32 @@ const rerackLayout = computed(() => (cupsCount.value === 10 ? positions10 : posi
                     :clickable="canEdit"
                     @select="(id) => (selectedTop = id)"
                 />
+            </section>
+
+            <!-- Top side cups only (for practice mode) -->
+            <section v-if="!shouldShowOpponent" class="space-y-0">
+                <CupRack
+                    :cups-count="cupsCount"
+                    :active-positions="state.topPositions"
+                    :selected-id="selectedTop"
+                    :title="'Opponent cups'"
+                    :inverted="true"
+                    :clickable="canEdit"
+                    @select="(id) => (selectedTop = id)"
+                />
+
+                <!-- Practice mode controls -->
+                <div class="flex justify-center mt-4">
+                    <Button
+                        size="sm"
+                        variant="destructive"
+                        :disabled="!canEdit"
+                        @click="endPracticeGame"
+                        class="bg-red-600 hover:bg-red-700"
+                    >
+                        Lost
+                    </Button>
+                </div>
             </section>
 
             <!-- Rerack Button -->
@@ -546,7 +639,7 @@ const rerackLayout = computed(() => (cupsCount.value === 10 ? positions10 : posi
             </div>
 
             <!-- Bottom side: authenticated user's team when possible -->
-            <section class="space-y-0">
+            <section v-if="shouldShowOpponent" class="space-y-0">
                 <CupRack
                     :cups-count="cupsCount"
                     :active-positions="state.bottomPositions"
@@ -569,7 +662,7 @@ const rerackLayout = computed(() => (cupsCount.value === 10 ? positions10 : posi
                             <template v-if="stats.get(p.id)">
                                 {{ stats.get(p.id)!.hitRate }}% hit, {{ stats.get(p.id)!.edgeRate }}% edge, {{ stats.get(p.id)!.missRate }}% miss
                             </template>
-                            <template v-else>
+                            <template v-else">
                                 0% hit, 0% edge, 0% miss
                             </template>
                         </div>
@@ -577,12 +670,29 @@ const rerackLayout = computed(() => (cupsCount.value === 10 ? positions10 : posi
                 </div>
             </section>
 
-            <div v-if="!props.isParticipant" class="text-center text-sm text-muted-foreground">
-                Viewing live. Log in and join the game to submit updates.
-            </div>
-            <div v-else-if="props.game.is_ended" class="text-center text-sm text-muted-foreground">
-                Game has ended. Editing disabled.
-            </div>
+            <!-- Practice mode: only show player action buttons (no cups) -->
+            <section v-if="!shouldShowOpponent" class="space-y-0">
+                <div class="grid gap-2 cols-2">
+                    <div v-for="p in bottomActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-sm font-medium truncate">{{ p.name }}</span>
+                            <div class="flex items-center gap-1">
+                                <Button size="sm" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('HIT','bottom', p.id)">Hit</Button>
+                                <Button size="sm" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('EDGE','bottom', p.id)">Edge</Button>
+                                <Button size="sm" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','bottom', p.id)">Miss</Button>
+                            </div>
+                        </div>
+                        <div class="text-xs text-muted-foreground">
+                            <template v-if="stats.get(p.id)">
+                                {{ stats.get(p.id)!.hitRate }}% hit, {{ stats.get(p.id)!.edgeRate }}% edge, {{ stats.get(p.id)!.missRate }}% miss
+                            </template>
+                            <template v-else>
+                                0% hit, 0% edge, 0% miss
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </AppLayout>
 </template>

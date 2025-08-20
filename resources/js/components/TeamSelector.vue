@@ -72,7 +72,20 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Select Opponent Team
             </label>
-            <div class="relative">
+
+            <!-- No opponent checkbox -->
+            <div class="mb-3">
+                <label class="flex items-center">
+                    <input
+                        type="checkbox"
+                        v-model="noOpponent"
+                        class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
+                    />
+                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">No opponent (practice mode)</span>
+                </label>
+            </div>
+
+            <div v-if="!noOpponent" class="relative">
                 <input
                     v-model="opponentTeamSearchQuery"
                     type="text"
@@ -90,7 +103,7 @@
 
             <!-- Opponent teams dropdown -->
             <div
-                v-show="showOpponentTeamDropdown && filteredOpponentTeams.length > 0"
+                v-show="!noOpponent && showOpponentTeamDropdown && filteredOpponentTeams.length > 0"
                 class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto"
             >
                 <div
@@ -109,7 +122,7 @@
         </div>
 
         <!-- Selected opponent team display -->
-        <div v-if="selectedOpponentTeam" class="mt-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-md">
+        <div v-if="selectedOpponentTeam && !noOpponent" class="mt-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-md">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
@@ -169,6 +182,12 @@ const showUserTeamDropdown = ref(false)
 const showOpponentTeamDropdown = ref(false)
 const selectedUserTeam = ref<Team | null>(null)
 const selectedOpponentTeam = ref<Team | null>(null)
+const noOpponent = ref(false)
+
+// Find the placeholder team
+const placeholderTeam = computed(() => {
+    return props.opponentTeams.find(team => team.name === 'placeholder team')
+})
 
 // Filter user teams based on search query
 const filteredUserTeams = computed(() => {
@@ -178,12 +197,14 @@ const filteredUserTeams = computed(() => {
     )
 })
 
-// Filter opponent teams based on search query
+// Filter opponent teams based on search query, excluding placeholder team
 const filteredOpponentTeams = computed(() => {
-    return props.opponentTeams.filter(team =>
-        team.name.toLowerCase().includes(opponentTeamSearchQuery.value.toLowerCase()) ||
-        team.users.some(user => user.name.toLowerCase().includes(opponentTeamSearchQuery.value.toLowerCase()))
-    )
+    return props.opponentTeams
+        .filter(team => team.name !== 'placeholder team')
+        .filter(team =>
+            team.name.toLowerCase().includes(opponentTeamSearchQuery.value.toLowerCase()) ||
+            team.users.some(user => user.name.toLowerCase().includes(opponentTeamSearchQuery.value.toLowerCase()))
+        )
 })
 
 // Watch for changes in selected teams to update modelValue
@@ -201,6 +222,7 @@ watch(() => props.modelValue, (newValue) => {
         selectedOpponentTeam.value = null
         userTeamSearchQuery.value = ''
         opponentTeamSearchQuery.value = ''
+        noOpponent.value = false
     } else if (newValue.length === 1) {
         // Try to find which team is selected
         const teamId = newValue[0]
@@ -210,9 +232,18 @@ watch(() => props.modelValue, (newValue) => {
         if (userTeam) {
             selectedUserTeam.value = userTeam
             userTeamSearchQuery.value = userTeam.name
+            noOpponent.value = false
         } else if (opponentTeam) {
-            selectedOpponentTeam.value = opponentTeam
-            opponentTeamSearchQuery.value = opponentTeam.name
+            // Check if it's the placeholder team
+            if (opponentTeam.name === 'placeholder team') {
+                noOpponent.value = true
+                selectedOpponentTeam.value = opponentTeam
+                opponentTeamSearchQuery.value = ''
+            } else {
+                noOpponent.value = false
+                selectedOpponentTeam.value = opponentTeam
+                opponentTeamSearchQuery.value = opponentTeam.name
+            }
         }
     } else if (newValue.length === 2) {
         // Find both teams
@@ -224,8 +255,16 @@ watch(() => props.modelValue, (newValue) => {
                 selectedUserTeam.value = userTeam
                 userTeamSearchQuery.value = userTeam.name
             } else if (opponentTeam) {
-                selectedOpponentTeam.value = opponentTeam
-                opponentTeamSearchQuery.value = opponentTeam.name
+                // Check if it's the placeholder team
+                if (opponentTeam.name === 'placeholder team') {
+                    noOpponent.value = true
+                    selectedOpponentTeam.value = opponentTeam
+                    opponentTeamSearchQuery.value = ''
+                } else {
+                    noOpponent.value = false
+                    selectedOpponentTeam.value = opponentTeam
+                    opponentTeamSearchQuery.value = opponentTeam.name
+                }
             }
         })
     }
@@ -241,6 +280,7 @@ function selectOpponentTeam(team: Team) {
     selectedOpponentTeam.value = team
     opponentTeamSearchQuery.value = team.name
     showOpponentTeamDropdown.value = false
+    noOpponent.value = false
 }
 
 function removeUserTeam() {
@@ -251,6 +291,7 @@ function removeUserTeam() {
 function removeOpponentTeam() {
     selectedOpponentTeam.value = null
     opponentTeamSearchQuery.value = ''
+    noOpponent.value = false
 }
 
 function handleUserTeamBlur() {
@@ -264,4 +305,25 @@ function handleOpponentTeamBlur() {
         showOpponentTeamDropdown.value = false
     }, 200)
 }
+
+// Watch for noOpponent changes to automatically select placeholder team
+watch(noOpponent, (newValue) => {
+    if (newValue) {
+        // Select placeholder team automatically
+        if (placeholderTeam.value) {
+            selectedOpponentTeam.value = placeholderTeam.value
+            emit('update:modelValue', selectedUserTeam.value ?
+                [selectedUserTeam.value.id, placeholderTeam.value.id] :
+                [placeholderTeam.value.id]
+            )
+        }
+        opponentTeamSearchQuery.value = ''
+        showOpponentTeamDropdown.value = false
+    } else {
+        // Clear selection when unchecked
+        selectedOpponentTeam.value = null
+        opponentTeamSearchQuery.value = ''
+        emit('update:modelValue', selectedUserTeam.value ? [selectedUserTeam.value.id] : [])
+    }
+})
 </script>

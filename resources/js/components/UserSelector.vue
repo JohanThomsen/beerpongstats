@@ -17,7 +17,20 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Select Opponent
             </label>
-            <div class="relative">
+
+            <!-- No opponent checkbox -->
+            <div class="mb-3">
+                <label class="flex items-center">
+                    <input
+                        type="checkbox"
+                        v-model="noOpponent"
+                        class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
+                    />
+                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">No opponent (Opponent is not signed up)</span>
+                </label>
+            </div>
+
+            <div v-if="!noOpponent" class="relative">
                 <input
                     v-model="searchQuery"
                     type="text"
@@ -35,7 +48,7 @@
 
             <!-- Dropdown -->
             <div
-                v-show="showDropdown && filteredUsers.length > 0"
+                v-show="!noOpponent && showDropdown && filteredUsers.length > 0"
                 class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto"
             >
                 <div
@@ -51,7 +64,7 @@
         </div>
 
         <!-- Selected opponent display -->
-        <div v-if="selectedOpponent" class="mt-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-md">
+        <div v-if="selectedOpponent && !noOpponent" class="mt-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-md">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
@@ -83,6 +96,7 @@ import InputError from '@/components/InputError.vue'
 interface User {
     id: number
     name: string
+    email?: string
 }
 
 const props = defineProps<{
@@ -99,11 +113,19 @@ const emit = defineEmits<{
 const searchQuery = ref('')
 const showDropdown = ref(false)
 const selectedOpponent = ref<User | null>(null)
+const noOpponent = ref(false)
 
-// Filter users excluding current user and based on search query
+// Find the placeholder user
+const placeholderUser = computed(() => {
+    return props.users.find(user => user.email === 'placeholder1@placeholder.com')
+})
+
+// Filter users excluding current user and placeholder user, based on search query
 const filteredUsers = computed(() => {
     return props.users
         .filter(user => user.id !== props.currentUser.id)
+        .filter(user => user.email !== 'placeholder1@placeholder.com')
+        .filter(user => user.email !== 'placeholder2@placeholder.com')
         .filter(user =>
             user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
         )
@@ -124,14 +146,23 @@ watch(() => props.modelValue, (newValue) => {
         // Only current user selected
         selectedOpponent.value = null
         searchQuery.value = ''
+        noOpponent.value = false
     } else if (newValue.length === 2) {
         // Find the opponent (not current user)
         const opponentId = newValue.find(id => id !== props.currentUser.id)
         if (opponentId) {
             const opponent = props.users.find(user => user.id === opponentId)
             if (opponent) {
-                selectedOpponent.value = opponent
-                searchQuery.value = opponent.name
+                // Check if it's the placeholder user
+                if (opponent.email === 'placeholder1@placeholder.com') {
+                    noOpponent.value = true
+                    selectedOpponent.value = opponent
+                    searchQuery.value = ''
+                } else {
+                    noOpponent.value = false
+                    selectedOpponent.value = opponent
+                    searchQuery.value = opponent.name
+                }
             }
         }
     }
@@ -141,11 +172,13 @@ function selectUser(user: User) {
     selectedOpponent.value = user
     searchQuery.value = user.name
     showDropdown.value = false
+    noOpponent.value = false
 }
 
 function removeOpponent() {
     selectedOpponent.value = null
     searchQuery.value = ''
+    noOpponent.value = false
 }
 
 function handleBlur() {
@@ -154,4 +187,22 @@ function handleBlur() {
         showDropdown.value = false
     }, 200)
 }
+
+// Watch for noOpponent changes to automatically select placeholder user
+watch(noOpponent, (newValue) => {
+    if (newValue) {
+        // Select placeholder user automatically
+        if (placeholderUser.value) {
+            selectedOpponent.value = placeholderUser.value
+            emit('update:modelValue', [props.currentUser.id, placeholderUser.value.id])
+        }
+        searchQuery.value = ''
+        showDropdown.value = false
+    } else {
+        // Clear selection when unchecked
+        selectedOpponent.value = null
+        searchQuery.value = ''
+        emit('update:modelValue', [props.currentUser.id])
+    }
+})
 </script>

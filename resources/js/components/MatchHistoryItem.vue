@@ -22,6 +22,44 @@ const cardClasses = computed(() => {
         'LOSS': 'bg-gradient-to-r from-red-500/20 to-transparent'
     }[props.result]
 })
+
+// Check if the opponent should be hidden (placeholder users/teams)
+const shouldShowOpponent = computed(() => {
+    if (!props.secondaryParticipantName) return false
+
+    // Hide if opponent is placeholder user
+    if (props.secondaryParticipantName === 'placeholder1' ||
+        props.secondaryParticipantName === 'placeholder2') {
+        return false
+    }
+
+    // Hide if opponent is placeholder team
+    if (props.secondaryParticipantName === 'placeholder team') {
+        return false
+    }
+
+    return true
+})
+
+// For practice games, show only player's score (cups left)
+const displayScore = computed(() => {
+    if (shouldShowOpponent.value) {
+        // Normal game: show full score (e.g., "6-4")
+        return props.score
+    } else {
+        // Practice game: extract and show only player's score
+        const scoreParts = props.score.split('-')
+        if (scoreParts.length === 2) {
+            // Return only the first part (player's cups left)
+            if (scoreParts[1].trim() === '0') {
+                return 'Win'
+            }
+            return scoreParts[1] + ' Cups left'
+        }
+        // Fallback to full score if format is unexpected
+        return props.score
+    }
+})
 </script>
 
 <template>
@@ -32,7 +70,7 @@ const cardClasses = computed(() => {
                     <p v-if="participantName" class="text-base font-semibold text-gray-300">
                         {{ participantName }}
                     </p>
-                    <p v-if="secondaryParticipantName" class="text-base font-semibold text-gray-300">
+                    <p v-if="shouldShowOpponent" class="text-base font-semibold text-gray-300">
                         vs {{ secondaryParticipantName }}
                     </p>
                     <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm text-gray-400">
@@ -42,7 +80,7 @@ const cardClasses = computed(() => {
                     </div>
                 </div>
                 <div class="col-span-1 text-right space-y-2">
-                    <p class="text-3xl font-bold">{{ score }}</p>
+                    <p class="text-3xl font-bold">{{ displayScore }}</p>
                     <Button asChild size="sm" variant="outline">
                         <Link :href="route('games.live', { game: gameId })">Live</Link>
                     </Button>

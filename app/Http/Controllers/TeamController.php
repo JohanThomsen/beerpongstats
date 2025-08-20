@@ -17,7 +17,7 @@ class TeamController extends Controller
      */
     public function index()
     {
-        $teams = Team::with('users')->get();
+        $teams = Team::with('users')->whereNot('name', 'placeholder team')->get();
 
         return Inertia::render('Teams/Index', [
             'teams' => $teams
