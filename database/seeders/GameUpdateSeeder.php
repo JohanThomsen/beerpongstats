@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\GameType;
 use App\Enums\GameUpdateType;
 use App\Models\Game;
 use App\Models\GameUpdate;
@@ -16,6 +17,7 @@ class GameUpdateSeeder extends Seeder
     {
         $games = Game::with(['users', 'teams.users'])->get();
 
+        /** @var Game $game */
         foreach ($games as $game) {
             // Build side assignments: map user_id => side ('A' or 'B') and an ordered throwers array
             [$userSide, $throwers] = $this->buildSides($game);
@@ -24,10 +26,12 @@ class GameUpdateSeeder extends Seeder
                 continue;
             }
 
-            // Initial state: both sides have cups 1..10
+            $cups = $game->type === GameType::TEN_CUP ? 10 : 6;
+
+            // Initial state: both sides have cups 1..$cups
             $sidePositions = [
-                'A' => range(1, 10),
-                'B' => range(1, 10),
+                'A' => range(1, $cups),
+                'B' => range(1, $cups),
             ];
 
             // START update (neutral)
@@ -37,8 +41,8 @@ class GameUpdateSeeder extends Seeder
                 'type' => GameUpdateType::START,
                 'self_cup_positions' => $sidePositions['A'],
                 'opponent_cup_positions' => $sidePositions['B'],
-                'self_cups_left' => 10,
-                'opponent_cups_left' => 10,
+                'self_cups_left' => $cups,
+                'opponent_cups_left' => $cups,
                 'affected_cup' => null,
             ]);
 
@@ -50,7 +54,7 @@ class GameUpdateSeeder extends Seeder
                 $selfSide = $userSide[$userId] ?? 'A';
                 $oppSide = $selfSide === 'A' ? 'B' : 'A';
 
-                // choose a result; keep some randomness but honor game ending after 10 hits
+                // choose a result; keep some randomness but honor game ending after $cups hits
                 $type = $throwResults[array_rand($throwResults)];
 
                 $affectedCup = null;
@@ -60,7 +64,7 @@ class GameUpdateSeeder extends Seeder
                     $affectedCup = $sidePositions[$oppSide][$cupIndex];
                 }
 
-                GameUpdate::create([
+                GameUpdate::createQuietly([
                     'game_id' => $game->id,
                     'user_id' => $userId,
                     'type' => $type,
@@ -78,12 +82,12 @@ class GameUpdateSeeder extends Seeder
                     $sidePositions[$oppSide] = array_values($sidePositions[$oppSide]);
                 }
 
-                // If a side reached 0 cups due to hits on only one side, we still end when total hits == 10 per requirements
+                // If a side reached 0 cups due to hits on only one side, we still end when total hits == $cups per requirements
                 $i++;
             }
 
             // END update from a consistent perspective (side A)
-            GameUpdate::create([
+            GameUpdate::createQuietly([
                 'game_id' => $game->id,
                 'user_id' => null,
                 'type' => GameUpdateType::END,

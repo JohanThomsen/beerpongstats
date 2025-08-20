@@ -17,30 +17,6 @@ configureEcho({
     broadcaster: 'reverb',
 });
 
-// Simple POC listener for testing via `php artisan ws:ping`
-if (typeof window !== 'undefined') {
-    // Provide a small delay to ensure Echo is initialized in all environments
-    setTimeout(() => {
-        try {
-            // Log connection state changes (best-effort; pusher internals)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const conn: any = (echo() as any)?.connector?.pusher?.connection;
-            conn?.bind?.('connected', () => console.info('[ws] connected'));
-            conn?.bind?.('error', (e: unknown) => console.warn('[ws] error', e));
-
-            console.info('[ws] listening on channel: poc, event: .PocPing');
-            echo()
-                .channel('poc')
-                .listen('.PocPing', (e: unknown) => {
-                    console.info('[ws] PocPing received', e);
-                    window.dispatchEvent(new CustomEvent('poc:ping', { detail: e }));
-                });
-        } catch (e) {
-            console.warn('[ws] echo init failed', e);
-        }
-    }, 0);
-}
-
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({

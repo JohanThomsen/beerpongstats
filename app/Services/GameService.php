@@ -130,7 +130,6 @@ class GameService
                 return $team->users->contains($user);
             });
 
-            //TODO this seems like it never finds the secondary team, if it is the losing team
             $secondaryTeam = $game->teams->first(function ($team) use ($primaryTeam) {
                 return $team->id !== $primaryTeam->id;
             });

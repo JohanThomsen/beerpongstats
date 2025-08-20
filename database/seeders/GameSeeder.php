@@ -21,7 +21,7 @@ class GameSeeder extends Seeder
         Game::factory(5)->create(
             [
                 'is_solo' => false,
-                'is_ended' => true,
+                'is_ended' => false,
                 'type' => GameType::TEN_CUP
             ]
         )->each(function (Game $game) use ($teams) {
@@ -49,8 +49,8 @@ class GameSeeder extends Seeder
         Game::factory(5)->create(
             [
                 'is_solo' => true,
-                'is_ended' => true,
-                'type' => GameType::TEN_CUP
+                'is_ended' => false,
+                'type' => GameType::SIX_CUP
             ]
         )->each(function (Game $game) use ($users) {
             // Get 2 different random users
@@ -59,15 +59,15 @@ class GameSeeder extends Seeder
             $game->users()->attach(
                 $randomUsers->first()->id,
                 [
-                    'result' => GameResult::WIN,
-                    'cups_left' => 0,
+                    'result' => null,
+                    'cups_left' => 6,
                 ]
             );
             $game->users()->attach(
                 $randomUsers->last()->id,
                 [
-                    'result' => GameResult::LOSS,
-                    'cups_left' => rand(0, 10),
+                    'result' => null,
+                    'cups_left' => 6,
                 ]
             );
         });
