@@ -16,25 +16,25 @@ const emit = defineEmits<{ (e: 'select', position: number): void }>();
 // Predefined position map (percent coordinates) for triangle layouts
 // Numbering from tip (1) down to base (10)
 const positions10 = [
-    { id: 1, x: 50, y: 8 },
-    { id: 2, x: 43, y: 24 },
-    { id: 3, x: 57, y: 24 },
-    { id: 4, x: 36, y: 40 },
-    { id: 5, x: 50, y: 40 },
-    { id: 6, x: 64, y: 40 },
-    { id: 7, x: 29, y: 58 },
-    { id: 8, x: 43, y: 58 },
-    { id: 9, x: 57, y: 58 },
-    { id: 10, x: 71, y: 58 },
+    { id: 1, x: 50, y: 38 },
+    { id: 2, x: 43, y: 54 },
+    { id: 3, x: 57, y: 54 },
+    { id: 4, x: 36, y: 70 },
+    { id: 5, x: 50, y: 70 },
+    { id: 6, x: 64, y: 70 },
+    { id: 7, x: 29, y: 88 },
+    { id: 8, x: 43, y: 88 },
+    { id: 9, x: 57, y: 88 },
+    { id: 10, x: 71, y: 88 },
 ] as const;
 
 const positions6 = [
-    { id: 1, x: 50, y: 16 },
-    { id: 2, x: 43, y: 36 },
-    { id: 3, x: 57, y: 36 },
-    { id: 4, x: 36, y: 58 },
-    { id: 5, x: 50, y: 58 },
-    { id: 6, x: 64, y: 58 },
+    { id: 1, x: 50, y: 56 },
+    { id: 2, x: 43, y: 72 },
+    { id: 3, x: 57, y: 72 },
+    { id: 4, x: 36, y: 88 },
+    { id: 5, x: 50, y: 88 },
+    { id: 6, x: 64, y: 88 },
 ] as const;
 
 const layout = computed(() => (props.cupsCount === 10 ? positions10 : positions6));

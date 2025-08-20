@@ -304,17 +304,8 @@ const canHitBottom = computed(() => selectedBottom.value != null);
             </div>
 
             <!-- Top side: opponent; triangle inverted visually -->
-            <section class="space-y-3">
-                <CupRack
-                    :cups-count="cupsCount"
-                    :active-positions="state.topPositions"
-                    :selected-id="selectedTop"
-                    :title="participantsLabelTop"
-                    :inverted="true"
-                    :clickable="canEdit"
-                    @select="(id) => (selectedTop = id)"
-                />
-                <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <section class="space-y-0">
+                <div class="grid gap-2 cols-2">
                     <div v-for="p in topActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-sm font-medium truncate">{{ p.name }}</span>
@@ -334,10 +325,19 @@ const canHitBottom = computed(() => selectedBottom.value != null);
                         </div>
                     </div>
                 </div>
+                <CupRack
+                    :cups-count="cupsCount"
+                    :active-positions="state.topPositions"
+                    :selected-id="selectedTop"
+                    :title="participantsLabelTop"
+                    :inverted="true"
+                    :clickable="canEdit"
+                    @select="(id) => (selectedTop = id)"
+                />
             </section>
 
             <!-- Bottom side: authenticated user's team when possible -->
-            <section class="space-y-3">
+            <section class="space-y-0">
                 <CupRack
                     :cups-count="cupsCount"
                     :active-positions="state.bottomPositions"
@@ -346,7 +346,7 @@ const canHitBottom = computed(() => selectedBottom.value != null);
                     :clickable="canEdit"
                     @select="(id) => (selectedBottom = id)"
                 />
-                <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div class="grid gap-2 cols-2">
                     <div v-for="p in bottomActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-sm font-medium truncate">{{ p.name }}</span>
