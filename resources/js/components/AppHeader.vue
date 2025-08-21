@@ -34,8 +34,8 @@ const activeItemStyles = computed(
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
+        title: 'Match History',
+        href: `/user/${auth.value.user.id}/match-history`,
         icon: LayoutGrid,
     },
 ];
@@ -102,7 +102,7 @@ const rightNavItems: NavItem[] = [
                     </Sheet>
                 </div>
 
-                <Link :href="route('dashboard')" class="flex items-center gap-x-2">
+                <Link :href="route('user.match-history', { user: auth.value.user.id })" class="flex items-center gap-x-2">
                     <AppLogo />
                 </Link>
 
@@ -118,10 +118,6 @@ const rightNavItems: NavItem[] = [
                                     <component v-if="item.icon" :is="item.icon" class="mr-2 h-4 w-4" />
                                     {{ item.title }}
                                 </Link>
-                                <div
-                                    v-if="isCurrentRoute(item.href)"
-                                    class="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"
-                                ></div>
                             </NavigationMenuItem>
                         </NavigationMenuList>
                     </NavigationMenu>

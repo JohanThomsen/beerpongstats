@@ -13,19 +13,14 @@ const user = page.props.auth.user;
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
+        title: 'Match History',
+        href: `/user/${user.id}/match-history`,
+        icon: BookOpen,
     },
     {
         title: 'Create Game',
         href: '/games/create',
         icon: Plus,
-    },
-    {
-        title: 'Match History',
-        href: `/user/${user.id}/match-history`,
-        icon: BookOpen,
     },
     {
         title: 'Teams',
@@ -43,7 +38,7 @@ const footerNavItems: NavItem[] = [];
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="route('dashboard')">
+                        <Link :href="route('user.match-history', { user: user.id })">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>
