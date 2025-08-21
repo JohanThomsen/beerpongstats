@@ -171,10 +171,6 @@ const form = useForm({
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-    {
         title: 'Create Game',
         href: '/games/create',
     },
