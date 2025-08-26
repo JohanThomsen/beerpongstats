@@ -6,15 +6,32 @@ import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
-import { configureEcho, echo } from '@laravel/echo-vue';
+import { configureEcho } from '@laravel/echo-vue';
 import Pusher from 'pusher-js';
 
 // Reverb uses the Pusher protocol; make it available to Echo
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).Pusher = Pusher;
 
+// Get Reverb configuration from environment variables
+const reverbHost = import.meta.env.VITE_REVERB_HOST || 'localhost';
+const reverbPort = import.meta.env.VITE_REVERB_PORT || '8080';
+const reverbScheme = import.meta.env.VITE_REVERB_SCHEME || 'http';
+const reverbAppKey = import.meta.env.VITE_REVERB_APP_KEY || '';
+
+// Determine if we should use secure connections
+const isSecure = reverbScheme === 'https';
+
 configureEcho({
     broadcaster: 'reverb',
+    key: reverbAppKey,
+    wsHost: reverbHost,
+    wsPort: isSecure ? 443 : parseInt(reverbPort),
+    wssPort: isSecure ? 443 : parseInt(reverbPort),
+    forceTLS: isSecure,
+    encrypted: isSecure,
+    disableStats: true,
+    enabledTransports: ['ws', 'wss'],
 });
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
