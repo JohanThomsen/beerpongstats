@@ -255,15 +255,13 @@ async function createUpdate(type: GameUpdateType, actor: 'bottom' | 'top', actin
             // No cup selected for HIT; do nothing
             return;
         }
-    } else if (type === 'EDGE') {
-        // EDGE requires a selected opposing cup but does NOT remove it; send affected_cup for stats
+    } else {
+        // EDGE or MISS does not change cup positions
+        affectedCup = null;
         if (actor === 'bottom' && selectedTop.value != null) {
-            affectedCup = selectedTop.value;
+            selectedTop.value = null;
         } else if (actor === 'top' && selectedBottom.value != null) {
-            affectedCup = selectedBottom.value;
-        } else {
-            // No cup selected for EDGE; do nothing
-            return;
+            selectedBottom.value = null;
         }
     }
 
@@ -518,7 +516,7 @@ function endPracticeGame() {
                             </div>
                             <div class="mobile-action-buttons">
                                 <Button size="" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('HIT','top', p.id)" class="mobile-btn mobile-btn-hit">Hit</Button>
-                                <Button size="xs" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('EDGE','top', p.id)" class="mobile-btn mobile-btn-edge">Edge</Button>
+                                <Button size="xs" variant="outline" :disabled="!canEdit" @click="createUpdate('EDGE','top', p.id)" class="mobile-btn mobile-btn-edge">Edge</Button>
                                 <Button size="xs" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','top', p.id)" class="mobile-btn mobile-btn-miss">Miss</Button>
                             </div>
                         </div>
@@ -590,7 +588,7 @@ function endPracticeGame() {
                             </div>
                             <div class="mobile-action-buttons">
                                 <Button size="xs" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('HIT','bottom', p.id)" class="mobile-btn mobile-btn-hit">Hit</Button>
-                                <Button size="xs" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('EDGE','bottom', p.id)" class="mobile-btn mobile-btn-edge">Edge</Button>
+                                <Button size="xs" variant="outline" :disabled="!canEdit" @click="createUpdate('EDGE','bottom', p.id)" class="mobile-btn mobile-btn-edge">Edge</Button>
                                 <Button size="xs" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','bottom', p.id)" class="mobile-btn mobile-btn-miss">Miss</Button>
                             </div>
                         </div>
@@ -615,7 +613,7 @@ function endPracticeGame() {
                             </div>
                             <div class="mobile-action-buttons">
                                 <Button size="xs" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('HIT','bottom', p.id)" class="mobile-btn mobile-btn-hit">Hit</Button>
-                                <Button size="xs" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('EDGE','bottom', p.id)" class="mobile-btn mobile-btn-edge">Edge</Button>
+                                <Button size="xs" variant="outline" :disabled="!canEdit" @click="createUpdate('EDGE','bottom', p.id)" class="mobile-btn mobile-btn-edge">Edge</Button>
                                 <Button size="xs" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','bottom', p.id)" class="mobile-btn mobile-btn-miss">Miss</Button>
                             </div>
                         </div>
