@@ -497,131 +497,131 @@ function endPracticeGame() {
 
 <template>
     <AppLayout>
-        <div class="px-4 py-6 space-y-8">
-            <div class="text-center">
-                <Heading :title="`Live game`" :subtitle="`Game #${game.id} • ${game.type === 'TEN_CUP' ? '10' : '6'} cups`" />
+        <div class="mobile-game-container">
+            <!-- Game Content -->
+            <div class="mobile-game-content">
+                <!-- Top side: opponent; triangle inverted visually -->
+                <section v-if="shouldShowOpponent" class="mobile-section mobile-section-top">
+                    <div class="mobile-players-grid">
+                        <div v-for="p in topActors" :key="p.id" class="mobile-player-card">
+                            <div class="mobile-player-header">
+                                <span class="mobile-player-name">{{ p.name }}</span>
+                                <Button size="xs" variant="outline" :disabled="!canEdit" @click="openRerackModal" class="mobile-rerack-btn">Rerack</Button>
+                            </div>
+                            <div class="mobile-stats">
+                                <template v-if="stats.get(p.id)">
+                                    {{ stats.get(p.id)!.hitRate }}% | {{ stats.get(p.id)!.edgeRate }}% | {{ stats.get(p.id)!.missRate }}%
+                                </template>
+                                <template v-else>
+                                    0% | 0% | 0%
+                                </template>
+                            </div>
+                            <div class="mobile-action-buttons">
+                                <Button size="" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('HIT','top', p.id)" class="mobile-btn mobile-btn-hit">Hit</Button>
+                                <Button size="xs" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('EDGE','top', p.id)" class="mobile-btn mobile-btn-edge">Edge</Button>
+                                <Button size="xs" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','top', p.id)" class="mobile-btn mobile-btn-miss">Miss</Button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobile-cup-rack">
+                        <CupRack
+                            :cups-count="cupsCount"
+                            :active-positions="state.topPositions"
+                            :selected-id="selectedTop"
+                            :title="participantsLabelTop"
+                            :inverted="true"
+                            :clickable="canEdit"
+                            @select="(id) => (selectedTop = id)"
+                        />
+                    </div>
+                </section>
+
+                <!-- Top side cups only (for practice mode) -->
+                <section v-if="!shouldShowOpponent" class="mobile-section mobile-section-top">
+                    <div class="mobile-cup-rack">
+                        <CupRack
+                            :cups-count="cupsCount"
+                            :active-positions="state.topPositions"
+                            :selected-id="selectedTop"
+                            :title="'Opponent cups'"
+                            :inverted="true"
+                            :clickable="canEdit"
+                            @select="(id) => (selectedTop = id)"
+                        />
+                    </div>
+                    <div class="mobile-practice-controls">
+                        <Button
+                            size="sm"
+                            variant="destructive"
+                            :disabled="!canEdit"
+                            @click="endPracticeGame"
+                            class="mobile-lost-btn"
+                        >
+                            Lost
+                        </Button>
+                    </div>
+                </section>
+
+                <!-- Bottom side: authenticated user's team when possible -->
+                <section v-if="shouldShowOpponent" class="mobile-section mobile-section-bottom">
+                    <div class="mobile-cup-rack">
+                        <CupRack
+                            :cups-count="cupsCount"
+                            :active-positions="state.bottomPositions"
+                            :selected-id="selectedBottom"
+                            :title="participantsLabelBottom"
+                            :clickable="canEdit"
+                            @select="(id) => (selectedBottom = id)"
+                        />
+                    </div>
+                    <div class="mobile-players-grid">
+                        <div v-for="p in bottomActors" :key="p.id" class="mobile-player-card">
+                            <div class="mobile-player-header">
+                                <span class="mobile-player-name">{{ p.name }}</span>
+                                <Button size="xs" variant="outline" :disabled="!canEdit" @click="openRerackModal" class="mobile-rerack-btn">Rerack</Button>
+                            </div>
+                            <div class="mobile-stats">
+                                <template v-if="stats.get(p.id)">
+                                    {{ stats.get(p.id)!.hitRate }}% | {{ stats.get(p.id)!.edgeRate }}% | {{ stats.get(p.id)!.missRate }}%
+                                </template>
+                                <template v-else>
+                                    0% | 0% | 0%
+                                </template>
+                            </div>
+                            <div class="mobile-action-buttons">
+                                <Button size="xs" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('HIT','bottom', p.id)" class="mobile-btn mobile-btn-hit">Hit</Button>
+                                <Button size="xs" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('EDGE','bottom', p.id)" class="mobile-btn mobile-btn-edge">Edge</Button>
+                                <Button size="xs" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','bottom', p.id)" class="mobile-btn mobile-btn-miss">Miss</Button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Practice mode: only show player action buttons (no cups) -->
+                <section v-if="!shouldShowOpponent" class="mobile-section mobile-section-bottom">
+                    <div class="mobile-players-grid">
+                        <div v-for="p in bottomActors" :key="p.id" class="mobile-player-card">
+                            <div class="mobile-player-header">
+                                <span class="mobile-player-name">{{ p.name }}</span>
+                                <Button size="xs" variant="outline" :disabled="!canEdit" @click="openRerackModal" class="mobile-rerack-btn">Rerack</Button>
+                            </div>
+                            <div class="mobile-stats">
+                                <template v-if="stats.get(p.id)">
+                                    {{ stats.get(p.id)!.hitRate }}% | {{ stats.get(p.id)!.edgeRate }}% | {{ stats.get(p.id)!.missRate }}%
+                                </template>
+                                <template v-else>
+                                    0% | 0% | 0%
+                                </template>
+                            </div>
+                            <div class="mobile-action-buttons">
+                                <Button size="xs" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('HIT','bottom', p.id)" class="mobile-btn mobile-btn-hit">Hit</Button>
+                                <Button size="xs" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('EDGE','bottom', p.id)" class="mobile-btn mobile-btn-edge">Edge</Button>
+                                <Button size="xs" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','bottom', p.id)" class="mobile-btn mobile-btn-miss">Miss</Button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
-
-            <!-- Top side: opponent; triangle inverted visually -->
-            <section v-if="shouldShowOpponent" class="space-y-0">
-                <div class="grid gap-2 cols-2">
-                    <div v-for="p in topActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-sm font-medium truncate">{{ p.name }}</span>
-                            <Button size="sm" variant="outline" :disabled="!canEdit" @click="openRerackModal" class="border-blue-500 text-blue-700 hover:bg-blue-50 disabled:border-gray-300 disabled:text-gray-400">Rerack</Button>
-                        </div>
-                        <div class="text-xs text-muted-foreground">
-                            <template v-if="stats.get(p.id)">
-                                {{ stats.get(p.id)!.hitRate }}% hit, {{ stats.get(p.id)!.edgeRate }}% edge, {{ stats.get(p.id)!.missRate }}% miss
-                            </template>
-                            <template v-else>
-                                0% hit, 0% edge, 0% miss
-                            </template>
-                        </div>
-                        <!-- Full width row for action buttons -->
-                        <div class="grid grid-cols-3 gap-1 mt-2">
-                            <Button size="sm" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('HIT','top', p.id)" class="border-green-500 text-green-700 hover:bg-green-50 disabled:border-gray-300 disabled:text-gray-400">Hit</Button>
-                            <Button size="sm" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('EDGE','top', p.id)" class="border-yellow-500 text-yellow-700 hover:bg-yellow-50 disabled:border-gray-300 disabled:text-gray-400">Edge</Button>
-                            <Button size="sm" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','top', p.id)" class="border-red-500 text-red-700 hover:bg-red-50 disabled:border-gray-300 disabled:text-gray-400">Miss</Button>
-                        </div>
-                    </div>
-                </div>
-                <CupRack
-                    :cups-count="cupsCount"
-                    :active-positions="state.topPositions"
-                    :selected-id="selectedTop"
-                    :title="participantsLabelTop"
-                    :inverted="true"
-                    :clickable="canEdit"
-                    @select="(id) => (selectedTop = id)"
-                />
-            </section>
-
-            <!-- Top side cups only (for practice mode) -->
-            <section v-if="!shouldShowOpponent" class="space-y-0">
-                <CupRack
-                    :cups-count="cupsCount"
-                    :active-positions="state.topPositions"
-                    :selected-id="selectedTop"
-                    :title="'Opponent cups'"
-                    :inverted="true"
-                    :clickable="canEdit"
-                    @select="(id) => (selectedTop = id)"
-                />
-
-                <!-- Practice mode controls -->
-                <div class="flex justify-center mt-4">
-                    <Button
-                        size="sm"
-                        variant="destructive"
-                        :disabled="!canEdit"
-                        @click="endPracticeGame"
-                        class="bg-red-600 hover:bg-red-700"
-                    >
-                        Lost
-                    </Button>
-                </div>
-            </section>
-
-            <!-- Bottom side: authenticated user's team when possible -->
-            <section v-if="shouldShowOpponent" class="space-y-0">
-                <CupRack
-                    :cups-count="cupsCount"
-                    :active-positions="state.bottomPositions"
-                    :selected-id="selectedBottom"
-                    :title="participantsLabelBottom"
-                    :clickable="canEdit"
-                    @select="(id) => (selectedBottom = id)"
-                />
-                <div class="grid gap-2 cols-2">
-                    <div v-for="p in bottomActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-sm font-medium truncate">{{ p.name }}</span>
-                            <Button size="sm" variant="outline" :disabled="!canEdit" @click="openRerackModal" class="border-blue-500 text-blue-700 hover:bg-blue-50 disabled:border-gray-300 disabled:text-gray-400">Rerack</Button>
-                        </div>
-                        <div class="text-xs text-muted-foreground">
-                            <template v-if="stats.get(p.id)">
-                                {{ stats.get(p.id)!.hitRate }}% hit, {{ stats.get(p.id)!.edgeRate }}% edge, {{ stats.get(p.id)!.missRate }}% miss
-                            </template>
-                            <template v-else">
-                                0% hit, 0% edge, 0% miss
-                            </template>
-                        </div>
-                        <!-- Full width row for action buttons -->
-                        <div class="grid grid-cols-3 gap-1 mt-2">
-                            <Button size="sm" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('HIT','bottom', p.id)" class="border-green-500 text-green-700 hover:bg-green-50 disabled:border-gray-300 disabled:text-gray-400">Hit</Button>
-                            <Button size="sm" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('EDGE','bottom', p.id)" class="border-yellow-500 text-yellow-700 hover:bg-yellow-50 disabled:border-gray-300 disabled:text-gray-400">Edge</Button>
-                            <Button size="sm" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','bottom', p.id)" class="border-red-500 text-red-700 hover:bg-red-50 disabled:border-gray-300 disabled:text-gray-400">Miss</Button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Practice mode: only show player action buttons (no cups) -->
-            <section v-if="!shouldShowOpponent" class="space-y-0">
-                <div class="grid gap-2 cols-2">
-                    <div v-for="p in bottomActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-sm font-medium truncate">{{ p.name }}</span>
-                            <Button size="sm" variant="outline" :disabled="!canEdit" @click="openRerackModal" class="border-blue-500 text-blue-700 hover:bg-blue-50 disabled:border-gray-300 disabled:text-gray-400">Rerack</Button>
-                        </div>
-                        <div class="text-xs text-muted-foreground">
-                            <template v-if="stats.get(p.id)">
-                                {{ stats.get(p.id)!.hitRate }}% hit, {{ stats.get(p.id)!.edgeRate }}% edge, {{ stats.get(p.id)!.missRate }}% miss
-                            </template>
-                            <template v-else>
-                                0% hit, 0% edge, 0% miss
-                            </template>
-                        </div>
-                        <!-- Full width row for action buttons -->
-                        <div class="grid grid-cols-3 gap-1 mt-2">
-                            <Button size="sm" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('HIT','bottom', p.id)" class="border-green-500 text-green-700 hover:bg-green-50 disabled:border-gray-300 disabled:text-gray-400">Hit</Button>
-                            <Button size="sm" variant="outline" :disabled="!canEdit || !canHitTop" @click="createUpdate('EDGE','bottom', p.id)" class="border-yellow-500 text-yellow-700 hover:bg-yellow-50 disabled:border-gray-300 disabled:text-gray-400">Edge</Button>
-                            <Button size="sm" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','bottom', p.id)" class="border-red-500 text-red-700 hover:bg-red-50 disabled:border-gray-300 disabled:text-gray-400">Miss</Button>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </div>
 
         <!-- Rerack Modal Dialog (hidden, triggered by individual rerack buttons) -->
@@ -692,7 +692,248 @@ function endPracticeGame() {
 </template>
 
 <style scoped>
-/* Rerack modal cup positioning styles - matches CupRack component */
+/* Mobile-first responsive design */
+.mobile-game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.mobile-header {
+    flex: 0 0 auto;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.mobile-header :deep(h1) {
+    font-size: 1.25rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.mobile-header :deep(p) {
+    font-size: 0.875rem !important;
+    margin: 0 !important;
+}
+
+.mobile-game-content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    overflow: hidden;
+}
+
+.mobile-section {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+    padding: 0.5rem;
+}
+
+.mobile-section-top {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.mobile-players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.mobile-player-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    min-height: 0;
+}
+
+.mobile-player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.mobile-player-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #111827;
+    truncate: true;
+    flex: 1;
+}
+
+.mobile-rerack-btn {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.625rem !important;
+    height: auto !important;
+    min-height: 1.5rem !important;
+    border-color: #3b82f6 !important;
+    color: #1d4ed8 !important;
+}
+
+.mobile-stats {
+    font-size: 0.625rem;
+    color: #6b7280;
+    margin: 0.25rem 0;
+    text-align: center;
+}
+
+.mobile-action-buttons {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.mobile-btn {
+    flex: 1;
+    padding: 0.375rem 0.25rem !important;
+    font-size: 0.75rem !important;
+    height: auto !important;
+    min-height: 2rem !important;
+    font-weight: 600 !important;
+}
+
+.mobile-btn-hit {
+    border-color: #16a34a !important;
+    color: #15803d !important;
+}
+
+.mobile-btn-edge {
+    border-color: #eab308 !important;
+    color: #a16207 !important;
+}
+
+.mobile-btn-miss {
+    border-color: #dc2626 !important;
+    color: #b91c1c !important;
+}
+
+.mobile-cup-rack {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.mobile-cup-rack :deep(.rack) {
+    width: 100%;
+}
+
+.mobile-cup-rack :deep(.board) {
+    max-width: 280px !important;
+    aspect-ratio: 100 / 60 !important;
+}
+
+.mobile-cup-rack :deep(.title) {
+    font-size: 0.875rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.mobile-practice-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.mobile-lost-btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    background: #dc2626 !important;
+    color: white !important;
+}
+
+/* Dark mode adjustments */
+:where(html.dark) .mobile-game-container {
+    background: #0f172a;
+}
+
+:where(html.dark) .mobile-header {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+:where(html.dark) .mobile-section-top {
+    border-color: #334155;
+}
+
+:where(html.dark) .mobile-player-card {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+:where(html.dark) .mobile-player-name {
+    color: #f1f5f9;
+}
+
+:where(html.dark) .mobile-stats {
+    color: #94a3b8;
+}
+
+/* Media queries for different screen sizes */
+@media (max-height: 600px) {
+    .mobile-header {
+        padding: 0.5rem 1rem;
+    }
+
+    .mobile-section {
+        padding: 0.25rem;
+    }
+
+    .mobile-players-grid {
+        margin-bottom: 0.25rem;
+    }
+
+    .mobile-cup-rack :deep(.board) {
+        aspect-ratio: 100 / 50 !important;
+        max-width: 260px !important;
+    }
+}
+
+@media (max-height: 500px) {
+    .mobile-header :deep(h1) {
+        font-size: 1rem !important;
+    }
+
+    .mobile-header :deep(p) {
+        font-size: 0.75rem !important;
+    }
+
+    .mobile-cup-rack :deep(.board) {
+        aspect-ratio: 100 / 45 !important;
+        max-width: 240px !important;
+    }
+
+    .mobile-btn {
+        min-height: 1.75rem !important;
+        font-size: 0.625rem !important;
+    }
+}
+
+@media (max-width: 360px) {
+    .mobile-players-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mobile-player-name {
+        font-size: 0.625rem;
+    }
+
+    .mobile-stats {
+        font-size: 0.5rem;
+    }
+}
+
+/* Rerack modal styles remain the same */
 .rack {
     display: grid;
     gap: 0.5rem;
@@ -711,7 +952,7 @@ function endPracticeGame() {
 .cup {
     position: absolute;
     transform: translate(-50%, -50%);
-    width: 16%; /* Increased from 11% to make cups bigger */
+    width: 16%;
     aspect-ratio: 1;
     border-radius: 9999px;
     display: grid;
