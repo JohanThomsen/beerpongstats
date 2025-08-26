@@ -22,12 +22,17 @@ const reverbAppKey = import.meta.env.VITE_REVERB_APP_KEY || '';
 // Determine if we should use secure connections
 const isSecure = reverbScheme === 'https';
 
+// For production HTTPS, don't specify a port (use default 443)
+// For development, use the specified port
+const wsPort = isSecure && reverbPort === '443' ? undefined : parseInt(reverbPort);
+const wssPort = isSecure && reverbPort === '443' ? undefined : parseInt(reverbPort);
+
 configureEcho({
     broadcaster: 'reverb',
     key: reverbAppKey,
     wsHost: reverbHost,
-    wsPort: isSecure ? 443 : parseInt(reverbPort),
-    wssPort: isSecure ? 443 : parseInt(reverbPort),
+    wsPort: wsPort,
+    wssPort: wssPort,
     forceTLS: isSecure,
     encrypted: isSecure,
     disableStats: true,
