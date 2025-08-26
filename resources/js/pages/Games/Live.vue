@@ -797,7 +797,7 @@ function endPracticeGame() {
     font-size: 0.75rem !important;
     height: auto !important;
     min-height: 2rem !important;
-    font-weight: 600 !important;
+    font-weight: 6000 !important;
 }
 
 .mobile-btn-hit {
@@ -854,12 +854,7 @@ function endPracticeGame() {
 
 /* Dark mode adjustments */
 :where(html.dark) .mobile-game-container {
-    background: #0f172a;
-}
-
-:where(html.dark) .mobile-header {
-    background: #1e293b;
-    border-color: #334155;
+    background: black;
 }
 
 :where(html.dark) .mobile-section-top {
