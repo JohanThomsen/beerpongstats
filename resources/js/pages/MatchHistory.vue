@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import Heading from '@/components/Heading.vue';
 import MatchHistoryItem from '@/components/MatchHistoryItem.vue';
 import { Button } from '@/components/ui/button';
+import { Head, Link } from '@inertiajs/vue3';
 import { User } from '@/types';
 import type { GameDataObject } from '@/types/generated';
 import { router } from '@inertiajs/vue3';
@@ -48,10 +49,18 @@ const goToNextPage = () => {
 </script>
 
 <template>
+    <Head title="Match History" />
+
     <AppLayout>
         <div class="space-y-4 px-4 mt-8">
             <div class="text-center">
                 <Heading :title="`${user.name}'s match History`" />
+                <Link
+                    :href="route('games.create')"
+                    class="inline-flex items-center px-6 py-3 mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-colors duration-200"
+                >
+                    New Game
+                </Link>
             </div>
 
             <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

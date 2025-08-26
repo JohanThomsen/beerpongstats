@@ -26,6 +26,7 @@ yarn-error.log
 docker-compose.yml
 docker-compose.prod.yml
 docker-compose.dev.yml
+ssl-setup.sh
 
 # Ignore JetBrains PhpStorm terminal history files
 C:/Users/johan/AppData/Local/JetBrains/PhpStorm2025.2/terminal/history/beerpongstats-history*
