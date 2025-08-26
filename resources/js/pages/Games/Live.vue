@@ -508,6 +508,7 @@ function endPracticeGame() {
                     <div v-for="p in topActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-sm font-medium truncate">{{ p.name }}</span>
+                            <Button size="sm" variant="outline" :disabled="!canEdit" @click="openRerackModal" class="border-blue-500 text-blue-700 hover:bg-blue-50 disabled:border-gray-300 disabled:text-gray-400">Rerack</Button>
                         </div>
                         <div class="text-xs text-muted-foreground">
                             <template v-if="stats.get(p.id)">
@@ -518,11 +519,10 @@ function endPracticeGame() {
                             </template>
                         </div>
                         <!-- Full width row for action buttons -->
-                        <div class="grid grid-cols-4 gap-1 mt-2">
+                        <div class="grid grid-cols-3 gap-1 mt-2">
                             <Button size="sm" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('HIT','top', p.id)" class="border-green-500 text-green-700 hover:bg-green-50 disabled:border-gray-300 disabled:text-gray-400">Hit</Button>
                             <Button size="sm" variant="outline" :disabled="!canEdit || !canHitBottom" @click="createUpdate('EDGE','top', p.id)" class="border-yellow-500 text-yellow-700 hover:bg-yellow-50 disabled:border-gray-300 disabled:text-gray-400">Edge</Button>
                             <Button size="sm" variant="outline" :disabled="!canEdit" @click="createUpdate('MISS','top', p.id)" class="border-red-500 text-red-700 hover:bg-red-50 disabled:border-gray-300 disabled:text-gray-400">Miss</Button>
-                            <Button size="sm" variant="outline" :disabled="!canEdit" @click="openRerackModal" class="border-blue-500 text-blue-700 hover:bg-blue-50 disabled:border-gray-300 disabled:text-gray-400">Rerack</Button>
                         </div>
                     </div>
                 </div>
@@ -654,6 +654,7 @@ function endPracticeGame() {
                     <div v-for="p in bottomActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-sm font-medium truncate">{{ p.name }}</span>
+                            <Button size="sm" variant="outline" :disabled="!canEdit" @click="openRerackModal" class="border-blue-500 text-blue-700 hover:bg-blue-50 disabled:border-gray-300 disabled:text-gray-400">Rerack</Button>
                         </div>
                         <div class="text-xs text-muted-foreground">
                             <template v-if="stats.get(p.id)">
@@ -679,6 +680,7 @@ function endPracticeGame() {
                     <div v-for="p in bottomActors" :key="p.id" class="space-y-1 border rounded px-3 py-2">
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-sm font-medium truncate">{{ p.name }}</span>
+                            <Button size="sm" variant="outline" :disabled="!canEdit" @click="openRerackModal" class="border-blue-500 text-blue-700 hover:bg-blue-50 disabled:border-gray-300 disabled:text-gray-400">Rerack</Button>
                         </div>
                         <div class="text-xs text-muted-foreground">
                             <template v-if="stats.get(p.id)">
