@@ -563,83 +563,6 @@ function endPracticeGame() {
                 </div>
             </section>
 
-            <!-- Rerack Button -->
-            <div class="flex justify-center">
-                <Dialog v-model:open="rerackModalOpen">
-                    <DialogTrigger as-child>
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            :disabled="!canEdit"
-                            @click="openRerackModal"
-                        >
-                            Rerack
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent class="max-w-lg">
-                        <DialogHeader>
-                            <DialogTitle>Rerack Cups</DialogTitle>
-                        </DialogHeader>
-                        <div class="space-y-4">
-                            <p class="text-sm text-muted-foreground">
-                                Select a team to rerack. All remaining cups will be repositioned.
-                            </p>
-                            <div v-if="rerackStep === 'select-team'" class="flex gap-2">
-                                <Button
-                                    class="flex-1"
-                                    @click="selectTeamForRerack('top')"
-                                >
-                                    Rerack {{ participantsLabelTop }}
-                                </Button>
-                                <Button
-                                    class="flex-1"
-                                    @click="selectTeamForRerack('bottom')"
-                                >
-                                    Rerack {{ participantsLabelBottom }}
-                                </Button>
-                            </div>
-                            <div v-else-if="rerackStep === 'position-cups'" class="space-y-4">
-                                <p class="text-sm text-muted-foreground">
-                                    Click on the rack positions where you want to place the {{ rerackTempPositions.length }} cups ({{ rerackNewPositions.length }}/{{ rerackTempPositions.length }} placed):
-                                </p>
-
-                                <!-- Visual Cup Rack for Positioning -->
-                                <div class="rack">
-                                    <div class="board">
-                                        <button
-                                            v-for="position in rerackLayout"
-                                            :key="position.id"
-                                            type="button"
-                                            class="cup"
-                                            :style="{ left: position.x + '%', top: position.y + '%' }"
-                                            :class="[
-                                                rerackNewPositions.includes(position.id) ? 'cup--placed' : 'cup--empty',
-                                                'cup--clickable'
-                                            ]"
-                                            :title="`Position ${position.id}`"
-                                            @click="rerackNewPositions.includes(position.id) ? removeCupFromPosition(position.id) : placeCupAtPosition(position.id)"
-                                        >
-                                            <span class="dot" />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-end gap-2">
-                                    <Button variant="outline" @click="() => rerackStep = 'select-team'">Back</Button>
-                                    <Button variant="outline" @click="cancelRerack">Cancel</Button>
-                                    <Button
-                                        :disabled="rerackNewPositions.length !== rerackTempPositions.length"
-                                        @click="applyRerack"
-                                    >
-                                        Apply Rerack ({{ rerackNewPositions.length }}/{{ rerackTempPositions.length }} cups)
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </DialogContent>
-                </Dialog>
-            </div>
-
             <!-- Bottom side: authenticated user's team when possible -->
             <section v-if="shouldShowOpponent" class="space-y-0">
                 <CupRack
@@ -700,6 +623,71 @@ function endPracticeGame() {
                 </div>
             </section>
         </div>
+
+        <!-- Rerack Modal Dialog (hidden, triggered by individual rerack buttons) -->
+        <Dialog v-model:open="rerackModalOpen">
+            <DialogContent class="max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>Rerack Cups</DialogTitle>
+                </DialogHeader>
+                <div class="space-y-4">
+                    <p class="text-sm text-muted-foreground">
+                        Select a team to rerack. All remaining cups will be repositioned.
+                    </p>
+                    <div v-if="rerackStep === 'select-team'" class="flex gap-2">
+                        <Button
+                            class="flex-1"
+                            @click="selectTeamForRerack('top')"
+                        >
+                            Rerack {{ participantsLabelTop }}
+                        </Button>
+                        <Button
+                            class="flex-1"
+                            @click="selectTeamForRerack('bottom')"
+                        >
+                            Rerack {{ participantsLabelBottom }}
+                        </Button>
+                    </div>
+                    <div v-else-if="rerackStep === 'position-cups'" class="space-y-4">
+                        <p class="text-sm text-muted-foreground">
+                            Click on the rack positions where you want to place the {{ rerackTempPositions.length }} cups ({{ rerackNewPositions.length }}/{{ rerackTempPositions.length }} placed):
+                        </p>
+
+                        <!-- Visual Cup Rack for Positioning -->
+                        <div class="rack">
+                            <div class="board">
+                                <button
+                                    v-for="position in rerackLayout"
+                                    :key="position.id"
+                                    type="button"
+                                    class="cup"
+                                    :style="{ left: position.x + '%', top: position.y + '%' }"
+                                    :class="[
+                                        rerackNewPositions.includes(position.id) ? 'cup--placed' : 'cup--empty',
+                                        'cup--clickable'
+                                    ]"
+                                    :title="`Position ${position.id}`"
+                                    @click="rerackNewPositions.includes(position.id) ? removeCupFromPosition(position.id) : placeCupAtPosition(position.id)"
+                                >
+                                    <span class="dot" />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-2">
+                            <Button variant="outline" @click="() => rerackStep = 'select-team'">Back</Button>
+                            <Button variant="outline" @click="cancelRerack">Cancel</Button>
+                            <Button
+                                :disabled="rerackNewPositions.length !== rerackTempPositions.length"
+                                @click="applyRerack"
+                            >
+                                Apply Rerack ({{ rerackNewPositions.length }}/{{ rerackTempPositions.length }} cups)
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
     </AppLayout>
 </template>
 
