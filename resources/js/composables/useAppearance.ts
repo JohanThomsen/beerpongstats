@@ -9,7 +9,7 @@ export function updateTheme(value: Appearance) {
 
     if (value === 'system') {
         const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
-        const systemTheme = mediaQueryList.matches ? 'dark' : 'light';
+        const systemTheme = 'dark';
 
         document.documentElement.classList.toggle('dark', systemTheme === 'dark');
     } else {
